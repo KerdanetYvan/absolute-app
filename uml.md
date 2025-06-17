@@ -10,6 +10,8 @@ classDiagram
         +username: string
         +email: string
         +passwordHash: string
+        +latitude: float
+        +longitude: float
         +isAdmin: bool
         +createdAt: Date
 
@@ -46,6 +48,52 @@ classDiagram
     Article --> Comment : "1 receives *"
     User --> Article : "1 writes *"
     School --> Article : "* may be featured in *"
+
+```
+## Modélisation de la base de données
+```mermaid
+classDiagram
+    class User {
+        UUID id
+        string username
+        string email
+        string passwordHash
+        bool isAdmin
+        Date createdAt
+    }
+
+    class School {
+        UUID id
+        string name
+        string address
+        string city
+        float latitude
+        float longitude
+        string website
+        Date createdAt
+    }
+
+    class Article {
+        UUID id
+        string title
+        string content
+        string coverImageUrl
+        string slug
+        Date publishedAt
+    }
+
+    class Comment {
+        UUID id
+        UUID idUser
+        string content
+        Date createdAt
+    }
+
+    %% Relations
+    User "1" --> "many" Article : writes
+    Article "1" --> "many" Comment : receives
+    User "1" --> "many" Comment : writes
+    School "0..1" <-- "many" Article : may be featured in
 
 ```
 
@@ -86,6 +134,61 @@ sequenceDiagram
     API-->>AppMobile: Comment saved
     AppMobile->>User: Show confirmation
 ```
+
+
+## Diagramme de cas d'utilisation
+```mermaid
+graph TD
+
+  %% Acteurs
+  Visiteur[👤 Visiteur]
+  Utilisateur[👤 Utilisateur inscrit]
+  Admin[👤 Admin]
+
+  %% Fonctionnalités publiques
+  LireArticle[Lire un article]
+  VoirEcole[Voir école associée]
+
+  %% Fonctionnalités utilisateur
+  Inscription[S'inscrire]
+  Connexion[Se connecter]
+  Commenter[Commenter un article]
+  Favori[Mettre une école en favori]
+
+  %% Fonctionnalités admin
+  EcrireArticle[Écrire un article]
+  GérerArticles[Gérer les articles]
+  AssocierEcole[Associer une école à un article]
+  SupprimerCommentaire[Supprimer un commentaire]
+
+  %% Liens Visiteur
+  Visiteur --> LireArticle
+  Visiteur --> VoirEcole
+
+  %% Liens Utilisateur
+  Utilisateur --> Inscription
+  Utilisateur --> Connexion
+  Utilisateur --> Commenter
+  Utilisateur --> Favori
+
+  %% Dépendance logique (include)
+  Commenter --> Connexion
+  Favori --> Connexion
+
+  %% Liens Admin
+  Admin --> EcrireArticle
+  Admin --> GérerArticles
+  Admin --> AssocierEcole
+  Admin --> SupprimerCommentaire
+
+  %% Dépendance logique entre cas admin
+  GérerArticles --> EcrireArticle
+  AssocierEcole --> EcrireArticle
+
+
+```
+
+
 ## Diagramme de déploiement 
 
 ```mermaid
