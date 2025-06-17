@@ -111,12 +111,17 @@ graph TD
 ```
 
 
-## Matrice décisionnel
-|                        | Points forts                                                                                                                                                            | Points faibles                                                                                      |
-|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| NextJs (PWA)       | - Facilement déployable  <br> - Développement fullstack  <br> - Développement composant  <br> - Routage intégré  <br> - Version web & mobile paramétrable                 | - Responsive au lieu d’optimisation mobile  <br> - (vide)                                              |
-| React Native       | - Compatibilité sur iOS et Android  <br> - Scalable  <br> - Développement composant  <br> - Orienté mobile  <br> - map : react-native-maps  <br> - video player : react-native-video  <br> - Grosse communauté | - Composants spécifiques comparés à NextJs  <br> - Présence d’un back à côté                             |
-| Flutter            | - Orienté mobile  <br> - Développement multiplateforme  <br> - Connexion/Authentification simple avec Supabase  <br> - Libraries connues pour la localisation              | - Compliqué avec le back  <br> - Design peu libre et primitif  <br> - Version web peu adaptée (affichage mobile) |
+## Matrice décisionnelle
+
+| Critères                      | Coefficient | NextJS (PWA)  | React Native  | Flutter |
+|-------------------------------|-------------|---------------|---------------|---------|
+| Déploiement                   | 5           | 5             | 3             | 3       |
+| Système d'authentification    | 3           | 4             | 4             | 5       |
+| Performance mobile            | 4           | 2             | 4             | 5       |
+| Performance web               | 3           | 5             | 2             | 2       |
+| Développement multiplateforme | 4           | 3             | 5             | 5       |
+| Communauté                    | 4           | 5             | 5             | 3       |
+| Total                         |             | 92            | 89            | 88      |
 
 
 
