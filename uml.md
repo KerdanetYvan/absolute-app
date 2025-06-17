@@ -86,6 +86,7 @@ classDiagram
     class Comment {
         UUID id
         UUID idUser
+        UUID idArticle
         string content
         Date createdAt
     }
