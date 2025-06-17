@@ -240,7 +240,7 @@ graph TD
 #### Routage intégré : 
 - Système de routage puissant et intuitif
 #### Compromis acceptables :
-- Le seul point faible notable est l'utilisation du responsive design au lieu d'une optimisation mobile native. Cependant, avec les frameworks CSS modernes comme Tailwind CSS (déjà configuré dans votre projet), cela reste une solution viable.
+- Le seul point faible notable est l'utilisation du responsive design au lieu d'une optimisation mobile native. Cependant, avec les frameworks CSS modernes comme Tailwind CSS, cela reste une solution viable.
 #### Comparaison avec les alternatives :
 - React Native aurait nécessité un backend séparé
 Flutter présente des limitations au niveau du design et de l'intégration backend
