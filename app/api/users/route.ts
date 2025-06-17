@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import connectDB from '@/lib/mongodb';
-import User from '@/models/user.model';
+import User from '@/models/user.model.js';
 
 // GET - Récupérer tous les utilisateurs
 export async function GET() {
@@ -24,10 +24,26 @@ interface CreateUserBody {
   password: string;
 }
 
+// Options - Définir les méthodes autorisées
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Allow': 'GET, POST',
+      'Access-Control-Allow-Methods': 'GET, POST'
+    }
+  });
+}
+
 export async function POST(request: Request) {
   try {
+    console.log('Tentative de connexion à la base de données...');
     await connectDB();
+    console.log('Connexion réussie, lecture du body...');
+    
     const body = await request.json();
+    console.log('Body reçu:', body);
+    
     const { email, username, password } = body;
 
     // Vérification des champs requis
@@ -49,23 +65,42 @@ export async function POST(request: Request) {
 
     // Hashage du mot de passe
     const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await bcrypt.hash(password, saltRounds);    console.log('Tentative de création de l\'utilisateur avec:', {
+      email,
+      username,
+      hashedPassword: 'HIDDEN'
+    });
 
     // Création de l'utilisateur
     const newUser = await User.create({
       email,
       username,
       passwordHash
-    });    // Retourner l'utilisateur sans le passwordHash
-    const userResponse = newUser.toObject();
+    });
+
+    console.log('Utilisateur créé avec succès, ID:', newUser._id);
+
+    // Convertir en objet et retirer le passwordHash
+    const userResponse = JSON.parse(JSON.stringify(newUser));
     const { passwordHash: _, ...userWithoutPassword } = userResponse;
     
     return NextResponse.json(userWithoutPassword, { status: 201 });
-
   } catch (error) {
-    console.error('Erreur création utilisateur:', error);
+    console.error('Erreur détaillée création utilisateur:', {
+      error,
+      message: error instanceof Error ? error.message : 'Erreur inconnue',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    const errorMessage = error instanceof Error 
+      ? `Erreur: ${error.message}` 
+      : 'Erreur inconnue lors de la création de l\'utilisateur';
+      
     return NextResponse.json(
-      { error: 'Erreur lors de la création de l\'utilisateur' },
+      { 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : undefined
+      },
       { status: 500 }
     );
   }

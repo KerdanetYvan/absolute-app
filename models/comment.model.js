@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const commentSchema = new mongoose.Schema({
     idUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -19,5 +19,5 @@ const userSchema = new mongoose.Schema({
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
 
-const Comment = mongoose.model('Comment', userSchema);
+const Comment = mongoose.models.Comment || mongoose.model('Comment', commentSchema);
 export default Comment;
