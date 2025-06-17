@@ -117,3 +117,21 @@ graph TD
 | NextJs (PWA)       | - Facilement déployable  <br> - Développement fullstack  <br> - Développement composant  <br> - Routage intégré  <br> - Version web & mobile paramétrable                 | - Responsive au lieu d’optimisation mobile  <br> - (vide)                                              |
 | React Native       | - Compatibilité sur iOS et Android  <br> - Scalable  <br> - Développement composant  <br> - Orienté mobile  <br> - map : react-native-maps  <br> - video player : react-native-video  <br> - Grosse communauté | - Composants spécifiques comparés à NextJs  <br> - Présence d’un back à côté                             |
 | Flutter            | - Orienté mobile  <br> - Développement multiplateforme  <br> - Connexion/Authentification simple avec Supabase  <br> - Libraries connues pour la localisation              | - Compliqué avec le back  <br> - Design peu libre et primitif  <br> - Version web peu adaptée (affichage mobile) |
+
+
+
+### Avantages déterminants :
+#### Développement fullstack : 
+- Next.js permet de gérer le front-end et le back-end dans un même projet
+#### Facilité de déploiement : 
+- Intégration native avec Vercel pour un déploiement simplifié
+#### PWA (Progressive Web App) :
+- Permet de créer une application accessible sur web et mobile
+#### Routage intégré : 
+- Système de routage puissant et intuitif
+#### Compromis acceptables :
+- Le seul point faible notable est l'utilisation du responsive design au lieu d'une optimisation mobile native. Cependant, avec les frameworks CSS modernes comme Tailwind CSS (déjà configuré dans votre projet), cela reste une solution viable.
+#### Comparaison avec les alternatives :
+- React Native aurait nécessité un backend séparé
+Flutter présente des limitations au niveau du design et de l'intégration backend
+Le choix de Next.js apparaît donc comme le meilleur compromis pour développer une application web responsive qui peut fonctionner sur tous les supports, tout en gardant une base de code unique et facilement maintenable.
