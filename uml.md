@@ -41,6 +41,7 @@ classDiagram
         +id: UUID
         +idUser: UUID
         +content: string
+        +idArticle: UUID
         +createdAt: Date
     }
 
