@@ -49,7 +49,7 @@ classDiagram
 
 ```
 
-## Diagramme de 
+## Diagramme de Séquences
 
 ```mermaid
 sequenceDiagram
@@ -86,7 +86,7 @@ sequenceDiagram
     API-->>AppMobile: Comment saved
     AppMobile->>User: Show confirmation
 ```
-## Diagramme de déploiment 
+## Diagramme de déploiement 
 
 ```mermaid
 graph TD
