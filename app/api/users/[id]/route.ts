@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/user.model';
 
-// PATCH - CModifier un utilisateur
+// PATCH - Modifier un utilisateur
 
 interface UpdateUserBody {
   email?: string;
@@ -76,6 +76,49 @@ export async function PATCH(request: Request) {
     console.error('Erreur mise à jour utilisateur:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la mise à jour de l\'utilisateur' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE - Supprimer un utilisateur
+
+// ...existing code...
+
+export async function DELETE(request: Request) {
+  try {
+    await connectDB();
+
+    // Récupération de l'ID utilisateur depuis l'URL
+    const userId = request.url.split('/').pop();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'ID utilisateur requis' },
+        { status: 400 }
+      );
+    }
+
+    // Vérification si l'utilisateur existe
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return NextResponse.json(
+        { error: 'Utilisateur non trouvé' },
+        { status: 404 }
+      );
+    }
+
+    // Suppression de l'utilisateur
+    await User.findByIdAndDelete(userId);
+
+    return NextResponse.json(
+      { message: 'Utilisateur supprimé avec succès' },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error('Erreur suppression utilisateur:', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la suppression de l\'utilisateur' },
       { status: 500 }
     );
   }
