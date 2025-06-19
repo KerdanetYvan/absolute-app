@@ -142,50 +142,51 @@ sequenceDiagram
 ```mermaid
 graph TD
 
-  %% Acteurs
-  Visiteur[👤 Visiteur]
-  Utilisateur[👤 Utilisateur inscrit]
-  Admin[👤 Admin]
+  %% Actors
+  Visitor[Visitor]
+  RegisteredUser[Registered User]
+  Admin[Admin]
 
-  %% Fonctionnalités publiques
-  LireArticle[Lire un article]
-  VoirEcole[Voir école associée]
+  %% Public features
+  ReadArticle[Read an article]
+  ViewSchool[View associated school]
 
-  %% Fonctionnalités utilisateur
-  Inscription[S'inscrire]
-  Connexion[Se connecter]
-  Commenter[Commenter un article]
-  Favori[Mettre une école en favori]
+  %% User features
+  SignUp[Sign up]
+  Login[Log in]
+  Comment[Comment on an article]
+  Favorite[Add a school to favorites]
 
-  %% Fonctionnalités admin
-  EcrireArticle[Écrire un article]
-  GérerArticles[Gérer les articles]
-  AssocierEcole[Associer une école à un article]
-  SupprimerCommentaire[Supprimer un commentaire]
+  %% Admin features
+  WriteArticle[Write an article]
+  ManageArticles[Manage articles]
+  LinkSchool[Link a school to an article]
+  DeleteComment[Delete a comment]
 
-  %% Liens Visiteur
-  Visiteur --> LireArticle
-  Visiteur --> VoirEcole
+  %% Visitor links
+  Visitor --> ReadArticle
+  Visitor --> ViewSchool
 
-  %% Liens Utilisateur
-  Utilisateur --> Inscription
-  Utilisateur --> Connexion
-  Utilisateur --> Commenter
-  Utilisateur --> Favori
+  %% Registered user links
+  RegisteredUser --> SignUp
+  RegisteredUser --> Login
+  RegisteredUser --> Comment
+  RegisteredUser --> Favorite
 
-  %% Dépendance logique (include)
-  Commenter --> Connexion
-  Favori --> Connexion
+  %% Logical dependencies (include)
+  Comment --> Login
+  Favorite --> Login
 
-  %% Liens Admin
-  Admin --> EcrireArticle
-  Admin --> GérerArticles
-  Admin --> AssocierEcole
-  Admin --> SupprimerCommentaire
+  %% Admin links
+  Admin --> WriteArticle
+  Admin --> ManageArticles
+  Admin --> LinkSchool
+  Admin --> DeleteComment
 
-  %% Dépendance logique entre cas admin
-  GérerArticles --> EcrireArticle
-  AssocierEcole --> EcrireArticle
+  %% Logical dependencies between admin use cases
+  ManageArticles --> WriteArticle
+  LinkSchool --> WriteArticle
+
 
 
 ```
