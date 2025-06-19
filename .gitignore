@@ -50,11 +50,5 @@ pages/test-*.tsx
 pages/test-*.ts
 components/test-*.tsx
 components/test-*.ts
-
-# Alternative: ignore all test files in any directory
-# **/test-*.tsx
-# **/test-*.ts
-
-# Scripts de test locaux
 scripts/test-*.mjs
 scripts/test-*.js
