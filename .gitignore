@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/scripts
 
 # next.js
 /.next/
@@ -43,3 +44,17 @@ next-env.d.ts
 # packages
 package-lock.json
 package.json
+
+# Test pages - keep local but don't commit
+pages/test-*.tsx
+pages/test-*.ts
+components/test-*.tsx
+components/test-*.ts
+
+# Alternative: ignore all test files in any directory
+# **/test-*.tsx
+# **/test-*.ts
+
+# Scripts de test locaux
+scripts/test-*.mjs
+scripts/test-*.js

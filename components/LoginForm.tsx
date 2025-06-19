@@ -13,11 +13,19 @@ export const LoginForm = () => {
         setError('');
         
         try {
+            console.log('🔄 Attempting login with:', { email, password: '***' });
             const formData = { email, password };
             await login(formData);
         } catch (err: any) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.error || err.message || 'Login failed');
+            console.error('❌ Login error:', err);
+            console.error('Response data:', err.response?.data);
+            console.error('Response status:', err.response?.status);
+            
+            const errorMessage = err.response?.data?.error || 
+                                err.response?.data?.message || 
+                                err.message || 
+                                'Login failed';
+            setError(errorMessage);
         }
     };
 
@@ -72,7 +80,8 @@ export const LoginForm = () => {
             </form>
             
             <div className="mt-4 text-sm text-gray-600">
-                <p>Test credentials are pre-filled. Make sure you have a user in your database.</p>
+                <p>Test credentials are pre-filled.</p>
+                <p>Check browser console for detailed error logs.</p>
             </div>
         </div>
     );

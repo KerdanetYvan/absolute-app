@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { connect } from "../../../lib/db";
+import connectDB from "../../../lib/mongodb";
 import { User } from "../../../models/user.model";
 
 const jwt_secret = process.env.JWT_SECRET;
@@ -13,7 +13,7 @@ export async function POST(request) {
         const body = await request.json();
 
         // Connect to database
-        connect();
+        await connectDB();
 
         // Search for user by email in database
         const user = await User.findOne({
