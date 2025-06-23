@@ -17,7 +17,10 @@ interface UpdateArticleBody {
   slug?: string;
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
     const body = await request.json();
@@ -49,10 +52,8 @@ export async function PATCH(request: Request) {
         { error: 'Au moins un champ doit être fourni pour la mise à jour' },
         { status: 400 }
       );
-    }
-
-    // Récupération de l'ID de l'article depuis l'URL
-    const articleId = request.url.split('/').pop();
+    }    // Récupération de l'ID de l'article depuis les paramètres
+    const articleId = params.id;
     if (!articleId) {
       return NextResponse.json(
         { error: "ID d'article requis" },
@@ -100,12 +101,15 @@ export async function PATCH(request: Request) {
 
 // DELETE - Supprimer un article
 
-export async function DELETE(request: Request) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
 
-    // Récupération de l'ID article depuis l'URL
-    const articleId = request.url.split('/').pop();
+    // Récupération de l'ID article depuis les paramètres
+    const articleId = params.id;
     if (!articleId) {
       return NextResponse.json(
         { error: "ID d'article requis" },
