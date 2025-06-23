@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Comment from '@/models/comment.model.js';
+const User = require('@/models/user.model.js');
+import Article from '@/models/article.model.js';
 import mongoose from 'mongoose';
 
 // GET - Récupérer tous les commentaires
@@ -80,9 +82,9 @@ export async function POST(request: Request) {
       );
     }    // Vérification que l'utilisateur et l'article existent
     try {
-      const [userExists, articleExists] = await Promise.all([
-        mongoose.model('User').findById(idUser),
-        mongoose.model('Article').findById(idArticle)
+        const [userExists, articleExists] = await Promise.all([
+        User.findById(idUser),
+        Article.findById(idArticle)
       ]);
 
       if (!userExists) {
