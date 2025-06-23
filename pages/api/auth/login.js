@@ -77,9 +77,7 @@ export default async function handler(req, res) {
         console.log('🔄 Getting User model...');
         const User = getUserModel();
         console.log('✅ User model loaded:', typeof User);
-        console.log('✅ User model name:', User.modelName);
-
-        // Search for user by email in database
+        console.log('✅ User model name:', User.modelName);        // Search for user by email in database
         console.log('🔍 Searching for user...');
         const user = await User.findOne({ email });
         console.log("👤 User found:", user ? 'Yes' : 'No');
@@ -91,7 +89,8 @@ export default async function handler(req, res) {
                 name: user.name,
                 hasPassword: !!user.password,
                 passwordLength: user.password ? user.password.length : 0,
-                role: user.role
+                role: user.role,
+                isEmailVerified: user.isEmailVerified
             });
         }
         
@@ -99,6 +98,16 @@ export default async function handler(req, res) {
         if (!user) {
             console.log('❌ User not found');
             return res.status(404).json({ error: "User not found" });
+        }
+
+        // Vérifier si l'email de l'utilisateur est vérifié
+        if (!user.isEmailVerified) {
+            console.log('❌ Email not verified');
+            return res.status(403).json({ 
+                error: "Email non vérifié", 
+                message: "Veuillez vérifier votre email avant de vous connecter",
+                requiresEmailVerification: true 
+            });
         }
 
         // Check if user has a password
