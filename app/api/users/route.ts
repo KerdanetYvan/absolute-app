@@ -26,10 +26,26 @@ interface CreateUserBody {
   password: string;
 }
 
+// Options - Définir les méthodes autorisées
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Allow': 'GET, POST',
+      'Access-Control-Allow-Methods': 'GET, POST'
+    }
+  });
+}
+
 export async function POST(request: Request) {
   try {
+    console.log('Tentative de connexion à la base de données...');
     await connectDB();
+    console.log('Connexion réussie, lecture du body...');
+    
     const body = await request.json();
+    console.log('Body reçu:', body);
+    
     const { email, username, password } = body;
 
     // Vérification des champs requis
@@ -78,40 +94,29 @@ export async function POST(request: Request) {
     const newUser = await User.create({
       email,
       username,
-      passwordHash,
-      isEmailVerified: false,
-      emailVerificationToken,
-      emailVerificationExpires
-    });    // Envoi de l'email de vérification
-    let emailSent = false;
-    try {
-      const emailResult = await sendVerificationEmail(email, username, emailVerificationToken);
-      
-      if (emailResult.success) {
-        emailSent = true;
-      } else {
-        console.warn('⚠️ Échec envoi email, mais utilisateur créé:', emailResult.error);
-      }
-    } catch (emailError) {
-      console.error('❌ Erreur envoi email:', emailError);
-      // On continue même si l'email échoue
-    }
-
-    // Retourner l'utilisateur sans les champs sensibles
+      passwordHash
+    });    // Retourner l'utilisateur sans le passwordHash
     const userResponse = newUser.toObject();
-    const { passwordHash: _, emailVerificationToken: __, ...userWithoutSensitiveData } = userResponse;
+    const { passwordHash: _, ...userWithoutPassword } = userResponse;
     
-    return NextResponse.json({
-      user: userWithoutSensitiveData,
-      message: 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
-      requiresEmailVerification: true,
-      emailSent
-    }, { status: 201 });
+    return NextResponse.json(userWithoutPassword, { status: 201 });
 
   } catch (error) {
-    console.error('Erreur création utilisateur:', error);
+    console.error('Erreur détaillée création utilisateur:', {
+      error,
+      message: error instanceof Error ? error.message : 'Erreur inconnue',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    const errorMessage = error instanceof Error 
+      ? `Erreur: ${error.message}` 
+      : 'Erreur inconnue lors de la création de l\'utilisateur';
+      
     return NextResponse.json(
-      { error: 'Erreur lors de la création de l\'utilisateur' },
+      { 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : undefined
+      },
       { status: 500 }
     );
   }
