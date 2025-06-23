@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface RegisterFormData {
     username: string;
@@ -102,11 +104,6 @@ export const RegisterForm = () => {
 
     return (
         <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-            <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">ANOMI</h1>
-                <p className="text-gray-600">Toute l'info sur l'animation</p>
-                <h2 className="text-2xl font-bold text-gray-900 mt-4">Inscription</h2>
-            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
