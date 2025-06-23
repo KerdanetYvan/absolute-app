@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const userSchema = new mongoose.Schema({    username: {
+const userSchema = new mongoose.Schema({
+    username: {
         type: String,
         required: [true, "Le nom d'utilisateur est requis"],
         unique: true,
@@ -23,6 +24,26 @@ const userSchema = new mongoose.Schema({    username: {
     isAdmin: {
         type: Boolean,
         default: false,
+    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailVerificationToken: {
+        type: String,
+        default: null
+    },
+    emailVerificationExpires: {
+        type: Date,
+        default: null
+    },
+    latitude: {
+        type: Number,
+        default: null
+    },
+    longitude: {
+        type: Number,
+        default: null
     }
 }, {
     timestamps: true, // Adding automatically the creation date and modification
