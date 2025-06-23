@@ -88,18 +88,39 @@ export async function POST(request: Request) {
 
     // Génération du token de vérification email
     const emailVerificationToken = crypto.randomBytes(32).toString('hex');
-    const emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 heures
-
-    // Création de l'utilisateur
+    const emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 heures    // Création de l'utilisateur
     const newUser = await User.create({
       email,
       username,
-      passwordHash
-    });    // Retourner l'utilisateur sans le passwordHash
-    const userResponse = newUser.toObject();
-    const { passwordHash: _, ...userWithoutPassword } = userResponse;
+      passwordHash,
+      isEmailVerified: false,
+      emailVerificationToken,
+      emailVerificationExpires
+    });
+
+    // Envoi de l'email de vérification
+    let emailSent = false;
+    try {
+      const emailResult = await sendVerificationEmail(email, username, emailVerificationToken);
+      
+      if (emailResult.success) {
+        emailSent = true;
+      } else {
+        console.warn('⚠️ Échec envoi email, mais utilisateur créé:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Erreur envoi email:', emailError);
+      // On continue même si l'email échoue
+    }    // Retourner l'utilisateur sans les champs sensibles
+    const userResponse = JSON.parse(JSON.stringify(newUser));
+    const { passwordHash: _, emailVerificationToken: __, ...userWithoutSensitiveData } = userResponse;
     
-    return NextResponse.json(userWithoutPassword, { status: 201 });
+    return NextResponse.json({
+      user: userWithoutSensitiveData,
+      message: 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
+      requiresEmailVerification: true,
+      emailSent
+    }, { status: 201 });
 
   } catch (error) {
     console.error('Erreur détaillée création utilisateur:', {
