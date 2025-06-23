@@ -66,19 +66,16 @@ export async function POST(request: Request) {
     // Hashage du mot de passe
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);    console.log('Tentative de création de l\'utilisateur avec:', {
-      email,
-      username,
+      email,      username,
       hashedPassword: 'HIDDEN'
-    });
-
-    // Création de l'utilisateur
+    });    // Création de l'utilisateur
     const newUser = await User.create({
       email,
       username,
       passwordHash
     });
 
-    console.log('Utilisateur créé avec succès, ID:', newUser._id);
+    console.log('Utilisateur créé avec succès');
 
     // Convertir en objet et retirer le passwordHash
     const userResponse = JSON.parse(JSON.stringify(newUser));

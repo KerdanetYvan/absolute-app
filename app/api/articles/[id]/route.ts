@@ -19,7 +19,7 @@ interface UpdateArticleBody {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
@@ -52,8 +52,10 @@ export async function PATCH(
         { error: 'Au moins un champ doit être fourni pour la mise à jour' },
         { status: 400 }
       );
-    }    // Récupération de l'ID de l'article depuis les paramètres
-    const articleId = params.id;
+    }
+
+    // Récupération de l'ID de l'article depuis les paramètres
+    const { id: articleId } = await params;
     if (!articleId) {
       return NextResponse.json(
         { error: "ID d'article requis" },
@@ -103,13 +105,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
     // Récupération de l'ID article depuis les paramètres
-    const articleId = params.id;
+    const { id: articleId } = await params;
     if (!articleId) {
       return NextResponse.json(
         { error: "ID d'article requis" },
@@ -144,11 +146,11 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'ID article invalide' }, { status: 400 });
     }
