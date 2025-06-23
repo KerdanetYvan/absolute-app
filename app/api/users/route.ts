@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import connectDB from '@/lib/mongodb';
-import User from '@/models/user.model.js';
+import User from '@/models/user.model';
 
 // GET - Récupérer tous les utilisateurs
 export async function GET() {
