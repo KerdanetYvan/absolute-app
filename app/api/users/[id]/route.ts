@@ -1,16 +1,22 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import connectDB from '@/lib/mongodb';
-const User = require('@/models/user.model.js');
+import User from '@/models/user.model';
+
+interface UpdateUserBody {
+  email?: string;
+  username?: string;
+  password?: string;
+}
 
 export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
-    const { id } = await params;
+    const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'ID utilisateur invalide' }, { status: 400 });
     }
@@ -32,12 +38,15 @@ interface UpdateUserBody {
   password?: string;
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectDB();
     const body = await request.json();
     const { email, username, password } = body as UpdateUserBody;
-    
+
     // Vérification qu'au moins un champ est fourni
     if (!email && !username && !password) {
       return NextResponse.json(
@@ -46,11 +55,11 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // Récupération de l'ID utilisateur depuis l'URL
-    const userId = request.url.split('/').pop();
-    if (!userId) {
+    // Récupération de l'ID utilisateur depuis les paramètres
+    const { id: userId } = await params;
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
-        { error: 'ID utilisateur requis' },
+        { error: 'ID utilisateur requis ou invalide' },
         { status: 400 }
       );
     }
@@ -103,8 +112,6 @@ export async function PATCH(request: Request) {
 }
 
 // DELETE - Supprimer un utilisateur
-
-// ...existing code...
 
 export async function DELETE(request: Request) {
   try {
