@@ -84,14 +84,13 @@ export async function POST(request: Request) {
       },
       jwtSecret,
       { expiresIn: '24h' }
-    );
-
-    console.log('✅ Login successful');
+    );    console.log('✅ Login successful');
 
     // Créer la réponse avec le cookie
     const response = NextResponse.json({
       success: true,
       message: 'Connexion réussie',
+      token: token, // Ajouter le token dans la réponse
       user: {
         id: userObj._id,
         email: userObj.email,
