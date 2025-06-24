@@ -112,114 +112,93 @@ export const RegisterForm = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+        <div>
+            <div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="mb-[32px] flex flex-col items-center justify-center gap-[12px]">
+                        <div>
+                            <input
+                                id="username"
+                                name="username"
+                                type="text"
+                                value={formData.username}
+                                onChange={handleInputChange}
+                                required
+                                className="mt-1 block w-[226px] px-3 py-2 bg-[#D9D9D9] text-[#828282] text-sm rounded-[14px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Votre nom d'utilisateur"
+                            />
+                        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                        Nom d'utilisateur
-                    </label>
-                    <input
-                        id="username"
-                        name="username"
-                        type="text"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Votre nom d'utilisateur"
-                    />
-                </div>
+                        <div>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                required
+                                className="mt-1 block w-[226px] px-3 py-2 bg-[#D9D9D9] text-[#828282] text-sm rounded-[14px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="votre.email@exemple.com"
+                            />
+                        </div>
 
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                        Email
-                    </label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="votre.email@exemple.com"
-                    />
-                </div>
+                        <div>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                required
+                                className="mt-1 block w-[226px] px-3 py-2 bg-[#D9D9D9] text-[#828282] text-sm rounded-[14px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Entrer votre mot de passe"
+                            />
+                        </div>
 
-                <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                        Mot de passe
-                    </label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Au moins 6 caractères"
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                        Confirmer le mot de passe
-                    </label>
-                    <input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Répétez votre mot de passe"
-                    />
-                </div>
-
-                {error && (
-                    <div className="text-red-600 text-sm mt-2 p-3 bg-red-50 rounded-md border border-red-200">
-                        {error}
+                        <div>
+                            <input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                value={formData.confirmPassword}
+                                onChange={handleInputChange}
+                                required
+                                className="mt-1 block w-[226px] px-3 py-2 bg-[#D9D9D9] text-[#828282] text-sm rounded-[14px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Confirmer votre mot de passe"
+                            />
+                        </div>
                     </div>
-                )}
 
-                {success && (
-                    <div className="text-green-600 text-sm mt-2 p-3 bg-green-50 rounded-md border border-green-200">
-                        {success}
-                    </div>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isLoading ? (
-                        <span className="flex items-center">
-                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Inscription en cours...
-                        </span>
-                    ) : (
-                        'S\'inscrire'
+                    {error && (
+                        <div className="text-red-600 text-sm mt-2 p-3 bg-red-50 rounded-md border border-red-200">
+                            {error}
+                        </div>
                     )}
-                </button>
-            </form>
 
-            <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
-                    Déjà un compte ?{' '}
+                    {success && (
+                        <div className="text-green-600 text-sm mt-2 p-3 bg-green-50 rounded-md border border-green-200">
+                            {success}
+                        </div>
+                    )}
+
                     <button
-                        onClick={() => router.push('/auth/login')}
-                        className="font-medium text-blue-600 hover:text-blue-500"
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFB151] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Se connecter
+                        {isLoading ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Inscription en cours...
+                            </span>
+                        ) : (
+                            'S\'inscrire'
+                        )}
                     </button>
-                </p>
+                </form>
             </div>
         </div>
     );
