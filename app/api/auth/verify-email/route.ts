@@ -5,32 +5,53 @@ import User from '@/models/user.model';
 // GET - Vérifier le token d'email
 export async function GET(request: Request) {
   try {
+    console.log('🔄 Début vérification email...');
     await connectDB();
     
     // Extraire le token de l'URL
     const url = new URL(request.url);
     const token = url.searchParams.get('token');
+    console.log('🔑 Token reçu:', token ? `${token.substring(0, 10)}...` : 'null');
     
     if (!token) {
+      console.log('❌ Token manquant');
       return NextResponse.json(
         { error: 'Token de vérification manquant' },
         { status: 400 }
       );
+    }    // Rechercher l'utilisateur avec ce token
+    console.log('🔍 Recherche utilisateur avec token...');
+    
+    // D'abord, cherchons tous les utilisateurs avec ce token (sans condition d'expiration)
+    const userWithToken = await User.findOne({ emailVerificationToken: token });
+    console.log('👤 Utilisateur avec token (peu importe expiration):', userWithToken ? 'Trouvé' : 'Non trouvé');
+    
+    if (userWithToken) {
+      const userObj = JSON.parse(JSON.stringify(userWithToken));
+      console.log('📅 Token expires à:', userObj.emailVerificationExpires);
+      console.log('� Date actuelle:', new Date());
+      console.log('⏰ Token expiré?', new Date() > new Date(userObj.emailVerificationExpires));
+      console.log('�🔐 Email déjà vérifié:', userObj.isEmailVerified);
+      console.log('📧 Email de l\'utilisateur:', userObj.email);
     }
-
-    // Rechercher l'utilisateur avec ce token
+    
+    // Maintenant cherchons avec la condition d'expiration
     const user = await User.findOne({
       emailVerificationToken: token,
       emailVerificationExpires: { $gt: new Date() } // Token non expiré
     });
+    
+    console.log('👤 Utilisateur trouvé (avec vérification expiration):', user ? 'Oui' : 'Non');
 
     if (!user) {
+      console.log('❌ Token invalide ou expiré');
       return NextResponse.json(
         { error: 'Token de vérification invalide ou expiré' },
         { status: 400 }
       );
     }    // Vérifier l'email de l'utilisateur avec updateOne pour éviter les problèmes de types
-    await User.updateOne(
+    console.log('✅ Mise à jour de l\'utilisateur...');
+    const updateResult = await User.updateOne(
       { emailVerificationToken: token },
       {
         $set: { isEmailVerified: true },
@@ -40,6 +61,8 @@ export async function GET(request: Request) {
         }
       }
     );
+    
+    console.log('📝 Résultat de la mise à jour:', updateResult);
 
     return NextResponse.json({
       message: 'Email vérifié avec succès ! Votre compte est maintenant actif.',

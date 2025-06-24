@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 function VerifyEmailContent() {
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [message, setMessage] = useState('');
+    const hasStartedVerification = useRef(false); // Utiliser useRef pour persister entre renders
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams?.get('token');
@@ -17,12 +18,25 @@ function VerifyEmailContent() {
             return;
         }
 
+        // Vérification stricte pour éviter les appels multiples
+        if (hasStartedVerification.current) {
+            console.log('🚫 Appel évité - vérification déjà en cours');
+            return;
+        }
+
+        hasStartedVerification.current = true;
+
         const verifyEmail = async () => {
             try {
+                console.log('🔄 Début vérification avec token:', token.substring(0, 10) + '...');
+                
                 const response = await fetch(`/api/auth/verify-email?token=${token}`);
                 const data = await response.json();
 
+                console.log('📨 Réponse API:', response.status, data);
+
                 if (response.ok) {
+                    console.log('✅ Vérification réussie - affichage succès');
                     setStatus('success');
                     setMessage(data.message || 'Email vérifié avec succès !');
                     
@@ -31,17 +45,19 @@ function VerifyEmailContent() {
                         router.push('/auth/login');
                     }, 3000);
                 } else {
+                    console.log('❌ Vérification échouée:', data.error);
                     setStatus('error');
                     setMessage(data.error || 'Erreur lors de la vérification');
                 }
             } catch (error) {
+                console.error('❌ Erreur de connexion:', error);
                 setStatus('error');
                 setMessage('Erreur de connexion au serveur');
             }
         };
 
         verifyEmail();
-    }, [token, router]);
+    }, [token, router]); // Suppression de hasVerified des dépendances
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
