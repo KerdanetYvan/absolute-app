@@ -6,8 +6,15 @@ export default function Home() {
       <div className="max-w-2xl mx-auto text-center space-y-8">
         {/* Logo/Brand */}
         <div className="space-y-4">
-          <div className="mx-auto w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl font-bold">A</span>
+          <div className="mx-auto w-20 h-20 bg-gradient-to-r from-white to-indigo-50 rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl font-bold">
+              <Image
+                src="/logo.webp"
+                alt="ANOMI Logo"
+                width={64}
+                height={64}
+              />
+            </span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white">
             ANOMI

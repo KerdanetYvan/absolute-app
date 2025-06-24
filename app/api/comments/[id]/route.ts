@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import connectDB from '@/lib/mongodb';
-import Comment from '@/models/comment.model.js';
+import connectDB from '../../../../lib/mongodb';
+import Comment from '@/models/comment.model';
 
 interface UpdateCommentBody {
   content?: string;
