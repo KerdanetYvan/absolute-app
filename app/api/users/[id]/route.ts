@@ -2,24 +2,40 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import connectDB from '@/lib/mongodb';
-const User = require('@/models/user.model.js');
+
+// Import correct du modèle User
+import User from '@/models/user.model.js';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    console.log('🔍 API GET /api/users/[id] - Début de la requête');
     await connectDB();
+    console.log('📦 Connexion à MongoDB établie');
+    
     const { id } = await params;
+    console.log('🆔 ID reçu:', id);
+    
     if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.log('❌ ID invalide:', id);
       return NextResponse.json({ error: 'ID utilisateur invalide' }, { status: 400 });
     }
+    
+    console.log('🔍 Recherche utilisateur avec ID:', id);
     const user = await User.findById(id, '-passwordHash');
+    console.log('👤 Utilisateur trouvé:', !!user);
+    
     if (!user) {
+      console.log('❌ Utilisateur non trouvé pour ID:', id);
       return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
     }
+    
+    console.log('✅ Utilisateur récupéré avec succès');
     return NextResponse.json(user);
   } catch (error) {
+    console.error('❌ Erreur dans GET /api/users/[id]:', error);
     return NextResponse.json({ error: 'Erreur lors de la récupération de l\'utilisateur' }, { status: 500 });
   }
 }
