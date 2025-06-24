@@ -19,6 +19,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",
+    "leaflet": "^1.9.4",
     "mongodb": "^6.17.0",
     "mongoose": "^7.8.7",
     "mongoose-unique-validator": "^4.0.1",
@@ -26,6 +27,7 @@
     "nodemailer": "^7.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.6.2",
     "resend": "^4.6.0"
   },
