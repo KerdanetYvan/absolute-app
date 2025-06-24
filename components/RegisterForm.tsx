@@ -84,10 +84,19 @@ export const RegisterForm = () => {
                 }),
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setSuccess(data.message || 'Inscription réussie ! Vérifiez votre email.');
+            const data = await response.json();            if (response.ok) {
+                if (data.emailSent) {
+                    setSuccess(data.message || 'Inscription réussie ! Vérifiez votre email.');
+                } else {
+                    setSuccess(data.message || 'Inscription réussie ! Cependant, l\'email de vérification n\'a pas pu être envoyé.');
+                    console.warn('Email non envoyé:', data.emailError);
+                }
+                
+                // Afficher l'URL de prévisualisation en développement
+                if (data.emailPreviewUrl && process.env.NODE_ENV !== 'production') {
+                    console.log('📧 Prévisualisation email:', data.emailPreviewUrl);
+                }
+                
                 // Redirection vers une page de confirmation
                 setTimeout(() => {
                     router.push('/auth/check-email');

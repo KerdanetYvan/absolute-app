@@ -13,7 +13,7 @@ export default function RegisterPage() {
                         height={50}
                         className="mb-8"
                     />
-                    <h2 className="text-xl text-gray-600 mb-8 font-['Montserrat Alternates']">Continuer les recherches</h2>
+                    <h2 className="text-xl text-gray-600 mb-8 font-['Montserrat Alternates']">Commencer les recherches</h2>
                 </div>
                 <RegisterForm />
             </div>
