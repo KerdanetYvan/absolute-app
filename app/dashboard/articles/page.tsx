@@ -53,6 +53,7 @@ export default function DashboardArticlesPage() {
                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Image de couverture</th>
                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Nombre de vues</th>
                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Nombre de like</th>
+                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Catégorie</th> {/* Nouvelle colonne */}
                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Vidéo</th>
                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
               </tr>
@@ -60,7 +61,7 @@ export default function DashboardArticlesPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '16px' }}>Chargement...</td>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '16px' }}>Chargement...</td>
                 </tr>
               ) : articles.length > 0 ? (
                 articles.map((article: any) => (
@@ -76,7 +77,9 @@ export default function DashboardArticlesPage() {
                     <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{article.views ?? 0}</td>
                     <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{article.likes ?? 0}</td>
                     <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                      {/* Affiche un lien ou une icône si tu as une propriété vidéo */}
+                      {article.category ?? '-'}
+                    </td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
                       {article.videoUrl ? (
                         <a href={article.videoUrl} target="_blank" rel="noopener noreferrer">Voir</a>
                       ) : (
@@ -84,6 +87,21 @@ export default function DashboardArticlesPage() {
                       )}
                     </td>
                     <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                      <button
+    onClick={() => {/* Ajoute ici la logique de modification, par exemple ouvrir un modal ou naviguer vers une page d'édition */}}
+    style={{
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      color: '#1976d2',
+      fontSize: '20px',
+      marginRight: '8px',
+    }}
+    aria-label="Modifier l'article"
+    title="Modifier l'article"
+  >
+    ✏️
+  </button>
                       <button
                         onClick={() => handleDeleteArticle(article._id)}
                         style={{
@@ -103,7 +121,7 @@ export default function DashboardArticlesPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '16px' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '16px' }}>
                     Aucun article trouvé.
                   </td>
                 </tr>
