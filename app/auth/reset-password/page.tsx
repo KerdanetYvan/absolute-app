@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState('');
@@ -14,7 +15,7 @@ export default function ResetPasswordPage() {
     const [isCheckingToken, setIsCheckingToken] = useState(true);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const token = searchParams.get('token');
+    const token = searchParams?.get('token');
 
     useEffect(() => {
         if (!token) {
@@ -26,17 +27,13 @@ export default function ResetPasswordPage() {
         // Vérifier la validité du token
         const verifyToken = async () => {
             try {
-                const response = await fetch('/api/auth/verify-reset-token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token }),
+                const response = await fetch(`/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
+                    method: 'GET',
                 });
 
                 const data = await response.json();
 
-                if (response.ok && data.valid) {
+                if (response.ok) {
                     setIsValidToken(true);
                 } else {
                     setError(data.error || 'Token de réinitialisation invalide ou expiré');
@@ -111,10 +108,10 @@ export default function ResetPasswordPage() {
 
     if (isCheckingToken) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FFB151] mx-auto"></div>
                         <p className="mt-4 text-gray-600">Vérification du token...</p>
                     </div>
                 </div>
@@ -124,21 +121,28 @@ export default function ResetPasswordPage() {
 
     if (!isValidToken) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+                <div className="flex flex-col items-center justify-center text-center">
+                    <Image
+                        src="/logo.webp"
+                        alt="Logo ANOMI"
+                        width={50}
+                        height={50}
+                        className="absolute mx-auto top-[12%]"
+                    />
+                </div>
+                
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="text-center">
-                        <h2 className="text-3xl font-bold text-red-600 mb-2">
-                            Token invalide ❌
+                        <h2 className="text-3xl font-bold mb-4">
+                            Token invalide
                         </h2>
-                        <p className="text-gray-600 mb-8">
-                            Le lien de réinitialisation est invalide ou a expiré
-                        </p>
                     </div>
                 </div>
 
-                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                        <div className="text-center">
+                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                    <div className='flex flex-col items-center justify-center'>
+                        <div className="w-[226px] text-center">
                             {error && (
                                 <div className="text-red-600 text-sm mb-4 p-3 bg-red-50 rounded-md border border-red-200">
                                     {error}
@@ -146,21 +150,18 @@ export default function ResetPasswordPage() {
                             )}
 
                             <div className="space-y-4">
-                                <p className="text-sm text-gray-600">
-                                    Les liens de réinitialisation expirent après 1 heure pour des raisons de sécurité.
-                                </p>
 
                                 <div className="space-y-3">
                                     <Link
                                         href="/auth/forgot-password"
-                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#FFB151]"
                                     >
                                         Demander un nouveau lien
                                     </Link>
 
                                     <Link
                                         href="/auth/login"
-                                        className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        className="w-full flex justify-center py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-[#FFB151] border-[#FFB151]"
                                     >
                                         Retour à la connexion
                                     </Link>
@@ -169,16 +170,32 @@ export default function ResetPasswordPage() {
                         </div>
                     </div>
                 </div>
+
+                <div className='absolute bottom-0 left-0 w-full h-[150px] overflow-hidden pointer-events-none'>
+                    <span className='bg-[#FCB259] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
+                    <span className='w-[247px] h-[247px] bg-[#FCB259]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
+                    </span>
+                </div>
             </div>
         );
     }
 
     if (message) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+                <div className="flex flex-col items-center justify-center text-center">
+                    <Image
+                        src="/logo.webp"
+                        alt="Logo ANOMI"
+                        width={50}
+                        height={50}
+                        className="absolute mx-auto top-[12%]"
+                    />
+                </div>
+
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="text-center">
-                        <h2 className="text-3xl font-bold text-green-600 mb-2">
+                        <h2 className="text-3xl font-bold mb-2">
                             Succès ! ✅
                         </h2>
                         <p className="text-gray-600 mb-8">
@@ -187,42 +204,54 @@ export default function ResetPasswordPage() {
                     </div>
                 </div>
 
-                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                        <div className="text-center">
-                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                                <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                    <div>
+                        <div className="flex flex-col items-center justify-center text-center">
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 mb-4">
+                                <svg className="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </div>
 
-                            <div className="text-green-600 text-sm mb-4 p-3 bg-green-50 rounded-md border border-green-200">
+                            <div className="w-[226px] text-green-600 text-sm mb-4 p-3 bg-green-50 rounded-md border border-green-200">
                                 {message}
                             </div>
 
-                            <p className="text-sm text-gray-600 mb-4">
-                                Vous allez être redirigé vers la page de connexion dans quelques secondes...
-                            </p>
-
                             <Link
                                 href="/auth/login"
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                className="w-[226px] flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#FFB151] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Me connecter maintenant
                             </Link>
                         </div>
                     </div>
                 </div>
+
+                <div className='absolute bottom-0 left-0 w-full h-[150px] overflow-hidden pointer-events-none'>
+                    <span className='bg-[#FCB259] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
+                    <span className='w-[247px] h-[247px] bg-[#FCB259]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
+                    </span>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col justify-center">
+            <div className="flex flex-col items-center justify-center text-center">
+                <Image
+                    src="/logo.webp"
+                    alt="Logo ANOMI"
+                    width={50}
+                    height={50}
+                    className="absolute mx-auto top-[12%]"
+                />
+            </div>
+
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                        Nouveau mot de passe 🔑
+                        Nouveau mot de passe
                     </h2>
                     <p className="text-gray-600 mb-8">
                         Choisissez un mot de passe sécurisé
@@ -230,13 +259,10 @@ export default function ResetPasswordPage() {
                 </div>
             </div>
 
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                <div className='w-full flex justify-center'>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                                Nouveau mot de passe
-                            </label>
                             <input
                                 id="password"
                                 name="password"
@@ -245,15 +271,12 @@ export default function ResetPasswordPage() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Au moins 6 caractères"
+                                className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                placeholder="Nouveau mot de passe"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                                Confirmer le mot de passe
-                            </label>
                             <input
                                 id="confirmPassword"
                                 name="confirmPassword"
@@ -262,33 +285,22 @@ export default function ResetPasswordPage() {
                                 required
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Retapez votre mot de passe"
+                                className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                placeholder="Confirmer le mot de passe"
                             />
                         </div>
 
                         {error && (
-                            <div className="text-red-600 text-sm p-3 bg-red-50 rounded-md border border-red-200">
+                            <div className="w-[226px] text-red-600 text-sm p-3 bg-red-50 rounded-md border border-red-200">
                                 {error}
                             </div>
                         )}
-
-                        <div className="bg-blue-50 p-4 rounded-md">
-                            <div className="text-sm text-blue-700">
-                                <p className="font-medium mb-2">Conseils pour un mot de passe sécurisé :</p>
-                                <ul className="list-disc list-inside space-y-1">
-                                    <li>Au moins 6 caractères</li>
-                                    <li>Mélangez lettres, chiffres et symboles</li>
-                                    <li>Évitez les mots courants</li>
-                                </ul>
-                            </div>
-                        </div>
 
                         <div>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-[226px] flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#FFB151] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? (
                                     <span className="flex items-center">
@@ -305,6 +317,12 @@ export default function ResetPasswordPage() {
                         </div>
                     </form>
                 </div>
+            </div>
+
+            <div className='absolute bottom-0 left-0 w-full h-[150px] overflow-hidden pointer-events-none'>
+                <span className='bg-[#FCB259] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
+                <span className='w-[247px] h-[247px] bg-[#FCB259]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
+                </span>
             </div>
         </div>
     );

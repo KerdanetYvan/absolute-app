@@ -3,6 +3,58 @@ import bcrypt from 'bcrypt';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/user.model';
 
+// GET - Vérifier la validité du token de réinitialisation
+export async function GET(request: Request) {
+  try {
+    console.log('🔄 Verify reset token API called');
+    
+    const url = new URL(request.url);
+    const token = url.searchParams.get('token');
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Token de réinitialisation manquant' },
+        { status: 400 }
+      );
+    }
+
+    console.log('🔍 Vérification du token:', token.substring(0, 10) + '...');
+
+    // Connexion à la base de données
+    await connectDB();
+    console.log('📦 Connexion à la base de données établie');
+
+    // Rechercher l'utilisateur avec ce token non expiré
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: new Date() }
+    });
+
+    if (!user) {
+      console.log('❌ Token invalide ou expiré');
+      return NextResponse.json(
+        { error: 'Token de réinitialisation invalide ou expiré' },
+        { status: 400 }
+      );
+    }
+
+    console.log('✅ Token valide pour l\'utilisateur:', user.username);
+
+    return NextResponse.json({
+      valid: true,
+      message: 'Token valide',
+      email: user.email
+    });
+
+  } catch (error) {
+    console.error('❌ Erreur dans verify reset token API:', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la vérification du token' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     console.log('🔄 Reset password API called');
