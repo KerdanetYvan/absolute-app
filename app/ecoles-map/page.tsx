@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -42,6 +42,8 @@ export default function EcolesMapPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selected, setSelected] = useState<EcoleWithCoords | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const infoRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         async function fetchEcoles() {
@@ -59,6 +61,17 @@ export default function EcolesMapPage() {
         fetchEcoles();
     }, []);
 
+    // Animation : ouvre le bandeau quand une école est sélectionnée
+    function handleSelect(ecole: EcoleWithCoords) {
+        setSelected(ecole);
+        setIsOpen(true);
+    }
+    // Ferme le bandeau
+    function handleClose() {
+        setSelected(null);
+        setIsOpen(false);
+    }
+
     if (loading) return <div>Chargement de la carte...</div>;
     if (error) return <div style={{ color: 'red' }}>Erreur : {error}</div>;
 
@@ -71,31 +84,40 @@ export default function EcolesMapPage() {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {ecoles.map((ecole) => (
-                        <Marker key={ecole.id} position={[ecole.lat, ecole.lon]} icon={googleIcon} eventHandlers={{ click: () => setSelected(ecole) }} />
+                        <Marker key={ecole.id} position={[ecole.lat, ecole.lon]} icon={googleIcon} eventHandlers={{ click: () => handleSelect(ecole) }} />
                     ))}
                 </MapContainer>
             </div>
-            {/* Carte info mobile style */}
-            <div style={{
-                background: 'white',
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                boxShadow: '0 -2px 16px #0002',
-                minHeight: 160,
-                padding: 20,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 16,
-                zIndex: 1000,
-                width: '100%',
-                maxWidth: 420,
-                margin: '0 auto',
-                marginTop: -24,
-                position: 'relative',
-                bottom: 0
-            }}>
-                {selected ? (
+            {/* Bandeau info animé */}
+            <div
+                ref={infoRef}
+                style={{
+                    background: 'white',
+                    borderTopLeftRadius: 24,
+                    borderTopRightRadius: 24,
+                    boxShadow: '0 -2px 16px #0002',
+                    minHeight: isOpen ? 160 : 48,
+                    padding: isOpen ? 20 : 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: isOpen ? 16 : 0,
+                    zIndex: 1000,
+                    width: '100%',
+                    maxWidth: 420,
+                    margin: '0 auto',
+                    marginTop: -24,
+                    position: 'relative',
+                    bottom: 0,
+                    transition: 'min-height 0.35s cubic-bezier(.4,1.4,.6,1), padding 0.35s cubic-bezier(.4,1.4,.6,1)',
+                    overflow: 'hidden',
+                }}
+            >
+                {!isOpen ? (
+                    <div style={{ width: '100%', textAlign: 'center', color: '#888', fontSize: 13, padding: 10, cursor: 'pointer', userSelect: 'none' }} onClick={() => setIsOpen(true)}>
+                        Choisissez une école
+                    </div>
+                ) : selected ? (
                     <>
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 16 }}>
                             {selected.logo && <img src={selected.logo} alt={selected.nom} style={{ width: 56, height: 56, objectFit: 'contain', borderRadius: 12, background: '#f5f5f5', boxShadow: '0 2px 8px #0001', marginBottom: 0 }} />}
@@ -104,7 +126,8 @@ export default function EcolesMapPage() {
                                 <div style={{ fontSize: 13.5, color: '#444', marginTop: 4 }}>{selected.resume}</div>
                             </div>
                         </div>
-                        <div style={{ fontSize: 13.5, color: '#444', margin: '10px 0 0 0', textAlign: 'center', lineHeight: 1.4 }}>{selected.description_detaillee || selected.description || selected.adresse}</div>
+                        {/* Affiche uniquement le résumé, pas la description détaillée */}
+                        
                         <a href={selected.site} target="_blank" rel="noopener noreferrer" style={{
                             display: 'block',
                             width: '100%',
@@ -121,12 +144,19 @@ export default function EcolesMapPage() {
                             textTransform: 'lowercase',
                             letterSpacing: 0.5
                         }}>En savoir plus</a>
+                        <button onClick={handleClose} style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 16,
+                            background: 'none',
+                            border: 'none',
+                            fontSize: 22,
+                            color: '#888',
+                            cursor: 'pointer',
+                            fontWeight: 700
+                        }} aria-label="Fermer">×</button>
                     </>
-                ) : (
-                    <div style={{ width: '100%', textAlign: 'center', color: '#888', fontSize: 16, padding: 12 }}>
-                        Sélectionnez une école sur la carte
-                    </div>
-                )}
+                ) : null}
             </div>
         </div>
     );
