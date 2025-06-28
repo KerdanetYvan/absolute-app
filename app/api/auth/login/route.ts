@@ -92,7 +92,7 @@ export async function POST(request: Request) {
       message: 'Connexion réussie',
       token: token, // Ajouter le token dans la réponse
       user: {
-        id: userObj._id,
+        _id: userObj._id,
         email: userObj.email,
         username: userObj.username,
         isEmailVerified: userObj.isEmailVerified

@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import Article from '@/models/article.model.js';
+import User from '@/models/user.model.js'; // Import nécessaire pour le populate
+
+// Forcer l'enregistrement du modèle User si pas déjà fait
+if (!mongoose.models.User) {
+  require('@/models/user.model.js');
+}
 
 interface IArticle {
   title: string;
@@ -22,7 +28,7 @@ export async function GET() {
     console.log('Connexion réussie, recherche des articles...');
     
     const articles = await Article.find({})
-      .populate('author', 'username email')
+      // .populate('author', 'username email') // Désactivé temporairement
       .sort({ createdAt: -1 })
       .lean()
       .exec();

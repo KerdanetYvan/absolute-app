@@ -9,6 +9,28 @@ const userSchema = new mongoose.Schema({
         trim: true,
         minlength: [3, "Le nom d'utilisateur doit contenir au moins 3 caractères"]
     },
+    profilePicture: {
+        type: String,
+        default: null, // Default to null if no profile picture is provided
+        trim: true,
+        validate: {
+            validator: function(v) {
+                return /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/.test(v);
+            },
+            message: props => `${props.value} n'est pas une URL valide pour une image de profil!`
+        }
+    },
+    bannerPicture: {
+        type: String,
+        default: null, // Default to null if no banner picture is provided
+        trim: true,
+        validate: {
+            validator: function(v) {
+                return /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/.test(v);
+            },
+            message: props => `${props.value} n'est pas une URL valide pour une image de bannière!`
+        }
+    },
     email: {
         type: String,
         required: [true, "L'email est requis"],

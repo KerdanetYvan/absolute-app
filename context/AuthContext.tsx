@@ -48,8 +48,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {    // S
             console.log('🔄 Restauration des données d\'authentification');
             setAuth(user);
             setToken(storedToken);
+            // Configuration d'Axios après restauration
+            setupAxiosInterceptors(storedToken);
         }
-    }, []);    // User login function
+    }, []);
+
+    // Effect to setup Axios when token changes
+    useEffect(() => {
+        if (isClient && token) {
+            setupAxiosInterceptors(token);
+        }
+    }, [token, isClient]);    // User login function
     const login = async (dataForm: any) => {
         setIsLoading(true);
 
