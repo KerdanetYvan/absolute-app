@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Le mot de passe est requis"]
     },
+    favSchools: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'School', // Assuming you have a School model
+        default: []
+    }],
     isAdmin: {
         type: Boolean,
         default: false,
