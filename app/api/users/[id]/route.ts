@@ -68,7 +68,8 @@ export async function PATCH(
       profilePicture,
       bannerPicture,
       latitude,
-      longitude 
+      longitude,
+      isAdmin
     } = body as UpdateUserBody;
     
     // Vérification qu'au moins un champ est fourni
