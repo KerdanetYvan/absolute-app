@@ -19,9 +19,9 @@ export default function Footer() {
 
 
       <div className='absolute top-0 left-0 flex items-center justify-around w-full bg-[#FCB259]/20 dark:bg-[#3CBDD1]/20 backdrop-blur-sm h-[92px] rounded-t-[35px] px-[60px] pb-[10px]'>
-          <GrHomeRounded className='w-[20px] h-[20px]' />
+          <Link href='/'><GrHomeRounded className='w-[20px] h-[20px]' /></Link>
           <GrSearch className='w-[20px] h-[20px]' />
-          <GrUser className='w-[20px] h-[20px]' />
+          <Link href='/profile'><GrUser className='w-[20px] h-[20px]' /></Link>
       </div>
     </footer>
   )
