@@ -83,7 +83,7 @@ export default function page() {
           />
         </div>
         <Link href="/ecoles-map" className='block py-2 px-4 rounded-full bg-[#FEB157] dark:bg-[#3CBDD1] font-bold text-black dark:text-white mb-4'>
-          Trouvez les écoles proche de chez vous
+          Trouvez les écoles proches de chez vous
         </Link>
         <div className='w-full flex justify-around gap-2'>
           <button
