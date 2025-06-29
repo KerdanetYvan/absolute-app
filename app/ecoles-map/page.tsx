@@ -3,7 +3,14 @@ import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
+
+// Configuration des icônes Leaflet pour Next.js
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
 
 const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer), { ssr: false });
@@ -15,7 +22,7 @@ const googleIcon = new L.Icon({
     iconSize: [40, 48],            // taille adaptée pour un SVG moderne
     iconAnchor: [20, 48],          // ancre en bas du pin
     popupAnchor: [0, -48],
-    shadowUrl: iconShadow,
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
     shadowSize: [41, 41],
     shadowAnchor: [13, 41],
 });

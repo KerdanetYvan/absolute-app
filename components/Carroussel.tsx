@@ -1,6 +1,5 @@
 "use client";
 
-import { ObjectId } from 'mongoose';
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -38,10 +37,11 @@ type CarouselItem = Article | School;
 interface CarrousselProps {
     titre: string;
     type: 'Articles' | 'Schools';
-    list: ObjectId[];
+    taille?: 'small' | 'medium' | 'large';
+    list: string[];
 }
 
-export default function Carroussel({ titre, type, list }: CarrousselProps) {
+export default function Carroussel({ titre, type, taille, list }: CarrousselProps) {
     const [items, setItems] = useState<CarouselItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -99,11 +99,24 @@ export default function Carroussel({ titre, type, list }: CarrousselProps) {
         return text.substring(0, maxLength) + '...';
     };
 
+    const getItemSizeClasses = () => {
+        switch (taille) {
+            case 'small':
+                return 'w-[89px] h-[87px]';
+            case 'medium':
+                return 'w-[217px] h-[121px]';
+            case 'large':
+                return 'w-[310px] h-[172px]';
+            default:
+                return 'w-32 h-32'; // Taille par défaut
+        }
+    }
+
     // Rendu d'un article
     const renderArticle = (article: Article) => (
         <div key={article._id} className="flex-shrink-0">
             <Link href={`/articles/${article.slug}`} className="block">
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                <div className={`${getItemSizeClasses()} bg-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer`}>
                     {article.coverImageUrl ? (
                         <Image
                             src={article.coverImageUrl}
