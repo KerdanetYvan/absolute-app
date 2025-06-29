@@ -23,7 +23,7 @@ export default function GoBack() {
   return (
     <button
       onClick={handleGoBack}
-      className='fixed top-[15px] left-[15px] rounded-full bg-[#FCB259] dark:bg-[#3CBDD1] flex items-center justify-center text-white hover:bg-[#f9c66b] dark:hover:bg-[#4cd6d8] transition-colors duration-300'
+      className='fixed top-[15px] left-[25px] rounded-full bg-[#FCB259] dark:bg-[#3CBDD1] flex items-center justify-center text-white hover:bg-[#f9c66b] dark:hover:bg-[#4cd6d8] transition-colors duration-300'
       type="button"
       title="Revenir à la page précédente"
     >
