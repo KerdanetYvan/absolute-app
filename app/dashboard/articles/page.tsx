@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { NavBarDashboard } from '../../../components/NavBarDashboard';
+import { useRouter } from 'next/navigation';
 
 async function fetchArticles() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/articles`, {
@@ -50,6 +51,7 @@ async function patchArticle(articleId: string, article: any) {
 export default function DashboardArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   // Pour la modale d'ajout
   const [showModal, setShowModal] = useState(false);
@@ -171,116 +173,97 @@ export default function DashboardArticlesPage() {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="flex min-h-screen bg-white">
       <NavBarDashboard />
-      <main style={{ flex: 1, padding: '2rem' }}>
-        <h1>Liste des articles</h1>
+      <main className="flex-1 p-8">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">Gestion des articles</h1>
         <button
-          onClick={handleOpenModal}
-          style={{
-            marginBottom: '1rem',
-            padding: '8px 16px',
-            background: '#1976d2',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 4,
-            cursor: 'pointer',
-            fontWeight: 600,
-            fontSize: 16,
-          }}
+          onClick={() => router.push('/dashboard/articles/create')}
+          className="mb-6 px-6 py-3 rounded-lg font-semibold text-base shadow transition text-white flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#FFB151]/60 hover:scale-105 hover:shadow-lg"
+          style={{ backgroundColor: '#FFB151', boxShadow: '0 2px 8px 0 rgba(255,177,81,0.15)' }}
         >
-          + Ajouter un article
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Ajouter un article
         </button>
 
         {/* Modal Ajout */}
         {showModal && (
-          <div style={{
-            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-            background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-          }}>
-            <div style={{
-              background: '#fff', padding: 32, borderRadius: 8, minWidth: 350, maxWidth: 400, boxShadow: '0 2px 16px rgba(0,0,0,0.2)'
-            }}>
-              <h2>Nouvel article</h2>
-              <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Titre<br />
-                    <input
-                      name="title"
-                      value={form.title}
-                      onChange={handleChange}
-                      required
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+            <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
+              <h2 className="text-xl font-bold mb-6 text-gray-800">Nouvel article</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+                  <input
+                    name="title"
+                    value={form.title}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Contenu<br />
-                    <textarea
-                      name="content"
-                      value={form.content}
-                      onChange={handleChange}
-                      required
-                      rows={4}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contenu</label>
+                  <textarea
+                    name="content"
+                    value={form.content}
+                    onChange={handleChange}
+                    required
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Catégorie<br />
-                    <input
-                      name="category"
-                      value={form.category}
-                      onChange={handleChange}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                  <input
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Auteur<br />
-                    <select
-                      name="author"
-                      value={form.author}
-                      onChange={handleChange}
-                      required
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    >
-                      <option value="">Sélectionner un auteur</option>
-                      {users.map((user) => (
-                        <option key={user._id} value={user._id}>
-                          {user.username || user.name || user.email}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Auteur</label>
+                  <select
+                    name="author"
+                    value={form.author}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  >
+                    <option value="">Sélectionner un auteur</option>
+                    {users.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.username || user.name || user.email}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Image de couverture (URL)<br />
-                    <input
-                      name="coverImageUrl"
-                      value={form.coverImageUrl}
-                      onChange={handleChange}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Image de couverture (URL)</label>
+                  <input
+                    name="coverImageUrl"
+                    value={form.coverImageUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Vidéo (URL)<br />
-                    <input
-                      name="videoUrl"
-                      value={form.videoUrl}
-                      onChange={handleChange}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Vidéo (URL)</label>
+                  <input
+                    name="videoUrl"
+                    value={form.videoUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                  <button type="button" onClick={handleCloseModal} style={{ padding: '8px 12px' }}>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button type="button" onClick={handleCloseModal} className="px-4 py-2 rounded border border-gray-200 text-gray-700 hover:bg-gray-50">
                     Annuler
                   </button>
-                  <button type="submit" disabled={submitting} style={{
-                    background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 600
-                  }}>
+                  <button type="submit" disabled={submitting} className="px-5 py-2 rounded bg-[#1976d2] text-white font-semibold hover:bg-[#1251a3] transition">
                     {submitting ? 'Ajout...' : 'Ajouter'}
                   </button>
                 </div>
@@ -291,93 +274,80 @@ export default function DashboardArticlesPage() {
 
         {/* Modal Edition */}
         {showEditModal && (
-          <div style={{
-            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-            background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-          }}>
-            <div style={{
-              background: '#fff', padding: 32, borderRadius: 8, minWidth: 350, maxWidth: 400, boxShadow: '0 2px 16px rgba(0,0,0,0.2)'
-            }}>
-              <h2>Modifier l'article</h2>
-              <form onSubmit={handleEditSubmit}>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Titre<br />
-                    <input
-                      name="title"
-                      value={editForm.title}
-                      onChange={handleEditChange}
-                      required
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+            <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
+              <h2 className="text-xl font-bold mb-6 text-gray-800">Modifier l'article</h2>
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+                  <input
+                    name="title"
+                    value={editForm.title}
+                    onChange={handleEditChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Contenu<br />
-                    <textarea
-                      name="content"
-                      value={editForm.content}
-                      onChange={handleEditChange}
-                      required
-                      rows={4}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contenu</label>
+                  <textarea
+                    name="content"
+                    value={editForm.content}
+                    onChange={handleEditChange}
+                    required
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Catégorie<br />
-                    <input
-                      name="category"
-                      value={editForm.category}
-                      onChange={handleEditChange}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                  <input
+                    name="category"
+                    value={editForm.category}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Auteur<br />
-                    <select
-                      name="author"
-                      value={editForm.author}
-                      onChange={handleEditChange}
-                      required
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    >
-                      <option value="">Sélectionner un auteur</option>
-                      {users.map((user) => (
-                        <option key={user._id} value={user._id}>
-                          {user.username || user.name || user.email}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Auteur</label>
+                  <select
+                    name="author"
+                    value={editForm.author}
+                    onChange={handleEditChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  >
+                    <option value="">Sélectionner un auteur</option>
+                    {users.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.username || user.name || user.email}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Image de couverture (URL)<br />
-                    <input
-                      name="coverImageUrl"
-                      value={editForm.coverImageUrl}
-                      onChange={handleEditChange}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Image de couverture (URL)</label>
+                  <input
+                    name="coverImageUrl"
+                    value={editForm.coverImageUrl}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label>Vidéo (URL)<br />
-                    <input
-                      name="videoUrl"
-                      value={editForm.videoUrl}
-                      onChange={handleEditChange}
-                      style={{ width: '100%', padding: 8, marginTop: 4 }}
-                    />
-                  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Vidéo (URL)</label>
+                  <input
+                    name="videoUrl"
+                    value={editForm.videoUrl}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+                  />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                  <button type="button" onClick={handleCloseEditModal} style={{ padding: '8px 12px' }}>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button type="button" onClick={handleCloseEditModal} className="px-4 py-2 rounded border border-gray-200 text-gray-700 hover:bg-gray-50">
                     Annuler
                   </button>
-                  <button type="submit" disabled={editing} style={{
-                    background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 600
-                  }}>
+                  <button type="submit" disabled={editing} className="px-5 py-2 rounded bg-[#1976d2] text-white font-semibold hover:bg-[#1251a3] transition">
                     {editing ? 'Modification...' : 'Modifier'}
                   </button>
                 </div>
@@ -386,90 +356,75 @@ export default function DashboardArticlesPage() {
           </div>
         )}
 
-        <div style={{ overflowX: 'auto', marginTop: '2rem' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
+        {/* Nouveau style de tableau (Flowbite/Tailwind) */}
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 mt-6">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase" style={{ backgroundColor: '#FFB151' }}>
               <tr>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Titre de l'article</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Image de couverture</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Nombre de vues</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Nombre de like</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Catégorie</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Auteur</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Vidéo</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
+                <th className="px-6 py-3" style={{ fontSize: '17px' }}>Titre de l'article</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}>Image de couverture</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}>Vues</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}>Likes</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}>Catégorie</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}>Auteur</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}>Vidéo</th>
+                <th className="px-6 py-3 text-center" style={{ fontSize: '17px' }}><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '16px' }}>Chargement...</td>
+                  <td colSpan={8} className="text-center py-8 text-gray-500 bg-white">Chargement...</td>
                 </tr>
               ) : articles.length > 0 ? (
                 articles.map((article: any) => (
-                  <tr key={article._id}>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{article.title}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                  <tr key={article._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <th scope="row" className="px-6 py-4 font-medium text-black whitespace-nowrap dark:text-white bg-white">{article.title}</th>
+                    <td className="px-6 py-4 text-center bg-white">
                       {article.coverImageUrl ? (
-                        <img src={article.coverImageUrl} alt="Couverture" style={{ width: 60, height: 40, objectFit: 'cover', borderRadius: 4 }} />
+                        <img src={article.coverImageUrl} alt="Couverture" className="w-16 h-10 object-cover rounded mx-auto" />
                       ) : (
-                        <span style={{ color: '#aaa' }}>Aucune</span>
+                        <span className="text-gray-400">Aucune</span>
                       )}
                     </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{article.views ?? 0}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{article.likes ?? 0}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                      {article.category ?? '-'}
-                    </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                      {/* Affichage de l'auteur */}
+                    <td className="px-6 py-4 text-center bg-white">{article.views ?? 0}</td>
+                    <td className="px-6 py-4 text-center bg-white">{article.likes ?? 0}</td>
+                    <td className="px-6 py-4 text-center bg-white">{article.category ?? '-'}</td>
+                    <td className="px-6 py-4 text-center bg-white">
                       {typeof article.author === 'object' && article.author !== null
                         ? (article.author.username || article.author.name || article.author.email || article.author._id)
                         : (article.author ?? '-')}
                     </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                    <td className="px-6 py-4 text-center bg-white">
                       {article.videoUrl ? (
-                        <a href={article.videoUrl} target="_blank" rel="noopener noreferrer">Voir</a>
+                        <a href={article.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-500 hover:underline">Voir</a>
                       ) : (
-                        <span style={{ color: '#aaa' }}>-</span>
+                        <span className="text-gray-400">-</span>
                       )}
                     </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                    <td className="px-6 py-4 text-right bg-white">
                       <button
                         onClick={() => handleOpenEditModal(article)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#1976d2',
-                          fontSize: '20px',
-                          marginRight: '8px',
-                        }}
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-2"
                         aria-label="Modifier l'article"
                         title="Modifier l'article"
                       >
-                        ✏️
+                        Modifier
                       </button>
                       <button
                         onClick={() => handleDeleteArticle(article._id)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#e53935',
-                          fontSize: '20px',
-                        }}
+                        className="font-medium text-red-600 dark:text-red-500 hover:underline"
                         aria-label="Supprimer l'article"
                         title="Supprimer l'article"
                       >
-                        🗑️
+                        Supprimer
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '16px' }}>
+                  <td colSpan={8} className="text-center py-8 text-gray-500 bg-white">
                     Aucun article trouvé.
                   </td>
                 </tr>

@@ -61,33 +61,46 @@ const handleDelete = async (schoolId: string) => {
   return (
     <main style={{ flex: 1, padding: "2rem" }}>
       <AddSchool onAdded={() => window.location.reload()} />
-      <h1>Liste des écoles</h1>
-      <ul style={{ padding: 0, listStyle: "none" }}>
-        {schools.map((school) => (
-          <li key={school.id} style={{ marginBottom: "2rem", display: "flex", alignItems: "center" }}>
-            <img src={school.logo} alt={school.nom} style={{ width: 64, height: 64, marginRight: 16, borderRadius: 8, background: "#fff" }} />
-            <div>
-                <a href={school.site} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "bold", fontSize: "1.2rem", color: "#2563eb", textDecoration: "none" }}>
-                {school.nom}
-                </a>
-                <div style={{ color: "#555", fontSize: "0.95rem" }}>{school.adresse}</div>
-                <div style={{ color: "#666", fontSize: "0.9rem", marginTop: 4 }}>{school.resume}</div>
-            </div>
-            <button
-                style={{ marginLeft: 16, padding: "8px 12px", borderRadius: 6, background: "#feb151", color: "#222", border: "none", cursor: "pointer", fontWeight: 600 }}
-                onClick={() => handleEditClick(school)}
-            >
-                Modifier
-            </button>
-            <button
-                style={{ marginLeft: 8, padding: "8px 12px", borderRadius: 6, background: "#e53935", color: "#fff", border: "none", cursor: "pointer", fontWeight: 600 }}
-                onClick={() => handleDelete(school.id)}
-            >
-                Supprimer
-            </button>
-            </li>
-        ))}
-      </ul>
+<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+  {schools.map((school) => (
+    <li
+      key={school.id}
+      className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col mx-auto mb-8 p-4" // Ajout de w-full pour uniformiser la largeur
+    >
+      <a href={school.site} target="_blank" rel="noopener noreferrer">
+        <img
+          className="rounded-t-lg w-full h-40 object-contain bg-gray-50 border-b border-gray-100"
+          src={school.logo}
+          alt={school.nom}
+        />
+      </a>
+      <div className="p-5 flex flex-col flex-1">
+        <a href={school.site} target="_blank" rel="noopener noreferrer">
+          <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">
+            {school.nom}
+          </h5>
+        </a>
+        <div className="mb-2 text-gray-600 text-sm">{school.adresse}</div>
+        <p className="mb-4 font-normal text-gray-700 flex-1">{school.resume}</p>
+        <div className="flex gap-2 mt-auto">
+          <button
+            className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-[#FEB157] rounded-lg hover:bg-[#e09e3c] transition"
+            onClick={() => handleEditClick(school)}
+          >
+            Modifier
+          </button>
+          <button
+            style={{ backgroundColor: '#e53935' }}
+            className="inline-flex items-center px-3 py-2 text-sm font-medium text-white rounded-lg hover:bg-[#b71c1c] transition shadow focus:outline-none focus:ring-2 focus:ring-red-400/60 border-0"
+            onClick={() => handleDelete(school.id)}
+          >
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </li>
+  ))}
+</ul>
 {modalOpen && editingSchool && (
   <div style={{
     position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",

@@ -54,7 +54,7 @@ export default function DashboardUsersPage() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-  if (!window.confirm("Supprimer cet utilisateur ?")) return;
+    if (!window.confirm("Supprimer cet utilisateur ?")) return;
     try {
       await deleteUser(userId);
       setUsers(users => users.filter(u => u._id !== userId));
@@ -64,88 +64,54 @@ export default function DashboardUsersPage() {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="flex min-h-screen bg-white">
       <NavBarDashboard />
-      <main style={{ flex: 1, padding: '2rem' }}>
-        <h1>Liste des utilisateurs</h1>
-        <div style={{ overflowX: 'auto', marginTop: '2rem' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
+      <main className="flex-1 p-8">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">Gestion des utilisateurs</h1>
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 mt-6">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase" style={{ backgroundColor: '#FFB151' }}>
               <tr>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Nom d'utilisateur</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Email</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Vérifié</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Administrateur</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
+                <th className="px-6 py-3">Nom d'utilisateur</th>
+                <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3 text-center">Vérifié</th>
+                <th className="px-6 py-3 text-center">Administrateur</th>
+                <th className="px-6 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', padding: '16px' }}>Chargement...</td>
+                  <td colSpan={5} className="text-center py-8 text-gray-500 bg-white">Chargement...</td>
                 </tr>
               ) : users.length > 0 ? (
                 users.map((user: any) => (
-                  <tr key={user._id}>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.username}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.email}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {user.isEmailVerified ? 'Oui' : 'Non'}
+                  <tr key={user._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-800">{user.username}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-800">{user.email}</td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${user.isEmailVerified ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {user.isEmailVerified ? 'Oui' : 'Non'}
+                      </span>
                     </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                      <label style={{ display: 'inline-block', position: 'relative', width: '40px', height: '22px' }}>
+                    <td className="px-6 py-4 text-center">
+                      <label className="inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           checked={user.isAdmin}
                           onChange={() => handleAdminSwitch(user._id, user.isAdmin)}
-                          style={{
-                            opacity: 0,
-                            width: 0,
-                            height: 0,
-                          }}
-                          aria-label={user.isAdmin ? 'Administrateur' : 'Non administrateur'}
+                          className="sr-only peer"
+                          aria-pressed={user.isAdmin}
+                          aria-label={user.isAdmin ? 'Retirer le statut administrateur' : 'Donner le statut administrateur'}
+                          title={user.isAdmin ? 'Retirer le statut administrateur' : 'Donner le statut administrateur'}
                         />
-                        <span
-                          style={{
-                            position: 'absolute',
-                            cursor: 'pointer',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            backgroundColor: user.isAdmin ? '#4caf50' : '#ccc',
-                            borderRadius: '22px',
-                            transition: '.4s',
-                            display: 'block',
-                          }}
-                        />
-                        <span
-                          style={{
-                            position: 'absolute',
-                            content: '""',
-                            height: '16px',
-                            width: '16px',
-                            left: user.isAdmin ? '20px' : '4px',
-                            bottom: '3px',
-                            backgroundColor: 'white',
-                            borderRadius: '50%',
-                            transition: '.4s',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                            display: 'block',
-                          }}
-                        />
+                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFB151]/40 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFB151]"></div>
                       </label>
                     </td>
-                   <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                    <td className="px-6 py-4 text-center">
                       <button
                         onClick={() => handleDeleteUser(user._id)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#e53935',
-                          fontSize: '20px',
-                        }}
+                        className="text-red-600 hover:text-red-800 transition-colors text-xl"
                         aria-label="Supprimer l'utilisateur"
                         title="Supprimer l'utilisateur"
                       >
@@ -156,7 +122,7 @@ export default function DashboardUsersPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', padding: '16px' }}>
+                  <td colSpan={5} className="text-center py-8 text-gray-500 bg-white">
                     Aucun utilisateur trouvé.
                   </td>
                 </tr>
