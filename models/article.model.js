@@ -18,7 +18,7 @@ const articleSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        default: 'Non catégorisé'
+        default: 'article'
     },
     tags: [{
         type: String,
