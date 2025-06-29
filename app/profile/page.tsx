@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Footer from '@/components/Footer';
-import { useRouter, redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Carroussel from '@/components/Carroussel';
 import { ObjectId } from 'mongoose';
+import GoBack from '@/components/GoBack';
 
 interface UserProfile {
     _id: string;
@@ -150,6 +151,7 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen dark:bg-[#454141] pb-20">
+            <GoBack />
             <div className='pt-8 flex flex-col items-center justify-center gap-[22px]'>
                 <div className='relative w-full flex flex-col items-center justify-center pt-[20px]'>
                     {userProfile.bannerPicture ? (
@@ -186,7 +188,7 @@ export default function ProfilePage() {
                         <span className="text-sm text-yellow-500 ml-2">(Email non vérifié)</span>
                     )}
                 </div>
-                <button onClick={() => redirect('/edit-profile')} className='h-[30px] w-[184px] rounded-[10px] bg-[#FEB157] dark:bg-[#3CBDD1] font-bold'>Éditer le profil</button>
+                <button onClick={() => router.push('/edit-profile')} className='h-[30px] w-[184px] rounded-[10px] bg-[#FEB157] dark:bg-[#3CBDD1] font-bold'>Éditer le profil</button>
             </div>
 
             <Carroussel

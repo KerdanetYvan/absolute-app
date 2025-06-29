@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Footer from '@/components/Footer';
+import GoBack from '@/components/GoBack';
 import { useRouter } from 'next/navigation';
 
 interface UserProfile {
@@ -300,7 +301,11 @@ export default function EditProfilePage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#454141] pb-20">
+            {/* Bouton GoBack en position fixe */}
+            <GoBack />
+            
             <div className="w-full flex flex-col items-center justify-center max-w-4xl mx-auto py-8 px-4">
+                
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
                     Modifier le profil
                 </h1>

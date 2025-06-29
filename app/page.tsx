@@ -70,7 +70,7 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">
             Une question ? Un retour ?
           </p>
-          <div className="flex justify-center space-x-6">
+          <div className="flex justify-center space-x-4">
             <a 
               href="mailto:y_kerdanet@stu-digital-campus.fr" 
               className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
@@ -79,6 +79,15 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               Nous contacter
+            </a>
+            <a 
+              href="/test-goback-simple" 
+              className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Test GoBack
             </a>
           </div>
         </div>
