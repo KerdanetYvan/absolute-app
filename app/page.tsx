@@ -70,9 +70,9 @@ export default function Home() {
           <p className="text-gray-500 dark:text-gray-400">
             Une question ? Un retour ?
           </p>
-          <div className="flex justify-center space-x-6">
+          <div className="flex justify-center space-x-4">
             <a 
-              href="mailto:contact@anomi.fr" 
+              href="mailto:y_kerdanet@stu-digital-campus.fr" 
               className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

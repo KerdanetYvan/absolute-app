@@ -96,31 +96,43 @@ export async function POST(request: Request) {
       isEmailVerified: false,
       emailVerificationToken,
       emailVerificationExpires
-    });
-
-    // Envoi de l'email de vérification
+    });    // Envoi de l'email de vérification
     let emailSent = false;
+    let emailPreviewUrl = null;
+    let emailError = null;
+    
     try {
       const emailResult = await sendVerificationEmail(email, username, emailVerificationToken);
       
       if (emailResult.success) {
         emailSent = true;
+        emailPreviewUrl = emailResult.previewUrl; // URL pour Ethereal Mail si disponible
+        console.log('✅ Email de vérification envoyé avec succès');
       } else {
+        emailError = emailResult.error;
         console.warn('⚠️ Échec envoi email, mais utilisateur créé:', emailResult.error);
-      }
-    } catch (emailError) {
-      console.error('❌ Erreur envoi email:', emailError);
+      }    } catch (emailErrorCatch) {
+      emailError = emailErrorCatch instanceof Error ? emailErrorCatch.message : 'Erreur inconnue lors de l\'envoi d\'email';
+      console.error('❌ Erreur envoi email:', emailErrorCatch);
       // On continue même si l'email échoue
-    }    // Retourner l'utilisateur sans les champs sensibles
+    }
+
+    // Retourner l'utilisateur sans les champs sensibles
     const userResponse = JSON.parse(JSON.stringify(newUser));
     const { passwordHash: _, emailVerificationToken: __, ...userWithoutSensitiveData } = userResponse;
     
-    return NextResponse.json({
+    const response = {
       user: userWithoutSensitiveData,
-      message: 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
+      message: emailSent 
+        ? 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.'
+        : 'Compte créé avec succès, mais l\'email de vérification n\'a pas pu être envoyé. Vous pouvez demander un nouvel email plus tard.',
       requiresEmailVerification: true,
-      emailSent
-    }, { status: 201 });
+      emailSent,
+      ...(emailError && { emailError }),
+      ...(emailPreviewUrl && process.env.NODE_ENV !== 'production' && { emailPreviewUrl })
+    };
+
+    return NextResponse.json(response, { status: 201 });
 
   } catch (error) {
     console.error('Erreur détaillée création utilisateur:', {

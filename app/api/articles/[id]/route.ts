@@ -1,7 +1,13 @@
 import { NextResponse, NextRequest } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Article from '@/models/article.model';
+import User from '@/models/user.model.js'; // Import nécessaire pour le populate
 import mongoose from 'mongoose';
+
+// Forcer l'enregistrement du modèle User si pas déjà fait
+if (!mongoose.models.User) {
+  require('@/models/user.model.js');
+}
 
 // PATCH - Modifier un article
 
@@ -144,22 +150,39 @@ export async function DELETE(
   }
 }
 
+// GET - Récupérer un article par ID
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
     const { id } = await params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ error: 'ID article invalide' }, { status: 400 });
-    }
-    const article = await Article.findById(id).populate('author', 'username email');
+    console.log('🔍 Récupération de l\'article ID:', id);
+    
+    await connectDB();
+    console.log('📦 Connexion à la base de données établie');
+    
+    const article = await Article.findById(id)
+      // .populate('author', 'username email') // Désactivé temporairement
+      .lean()
+      .exec();
+    
     if (!article) {
-      return NextResponse.json({ error: 'Article non trouvé' }, { status: 404 });
+      console.log('❌ Article non trouvé');
+      return NextResponse.json(
+        { error: 'Article non trouvé' },
+        { status: 404 }
+      );
     }
+    
+    console.log('✅ Article trouvé:', (article as any).title);
     return NextResponse.json(article);
-  } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la récupération de l\'article' }, { status: 500 });
+    
+  } catch (error: any) {
+    console.error('❌ Erreur lors de la récupération de l\'article:', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la récupération de l\'article', details: error.message },
+      { status: 500 }
+    );
   }
 }

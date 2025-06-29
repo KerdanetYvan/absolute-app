@@ -26,9 +26,8 @@ const schoolSchema = new mongoose.Schema({
         type: String,
         required: true,
     }
-}, {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+}, {    timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
 
-const School = mongoose.model('School', schoolSchema);
+const School = mongoose.models.School || mongoose.model('School', schoolSchema);
 export default School;
