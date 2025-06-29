@@ -128,7 +128,7 @@ export default function EcolesMapPage() {
                         </div>
                         {/* Affiche uniquement le résumé, pas la description détaillée */}
                         
-                        <a href={selected.site} target="_blank" rel="noopener noreferrer" style={{
+                        <a href={`/ecoles/${selected.id}`} style={{
                             display: 'block',
                             width: '100%',
                             background: '#FFB13B',
