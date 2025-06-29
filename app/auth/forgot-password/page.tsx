@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
     }
 
     return (
-        <div className='h-screen max-h-screen overflow-hidden snap-none flex flex-col justify-center py-8 px-4 relative'>
+        <div className='h-screen max-h-screen dark:bg-[#454141] overflow-hidden snap-none flex flex-col justify-center py-8 px-4 relative'>
             <div className='mx-auto w-full max-w-md'>
                 <div className="flex flex-col items-center justify-center text-center">
                     <Image
@@ -87,24 +87,31 @@ export default function ForgotPasswordPage() {
                         alt="Logo ANOMI"
                         width={50}
                         height={50}
-                        className="absolute mx-auto top-[12%]"
+                        className="dark:hidden absolute mx-auto top-[12%]"
+                    />
+                    <Image
+                        src='/logo_dark.webp'
+                        alt="Logo ANOMI"
+                        width={50}
+                        height={50}
+                        className="hidden dark:block absolute mx-auto top-[12%]"
                     />
                 </div>
             
                 <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                     <div className="sm:mx-auto sm:w-full sm:max-w-md">
                         <div className="text-center">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                                 Mot de passe oublié ?
                             </h2>
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Pas de problème !
                             </p>
                         </div>
                     </div>
 
                     <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                        <div className="bg-white py-8 px-4 sm:px-10">
+                        <div className="py-8 px-4 sm:px-10">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className='w-full flex justify-center'>
                                     <input
@@ -115,7 +122,7 @@ export default function ForgotPasswordPage() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] rounded-[6px] placeholder-gray-400 sm:text-sm"
                                         placeholder="Email"
                                     />
                                 </div>
@@ -130,7 +137,7 @@ export default function ForgotPasswordPage() {
                                     <button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="w-[226px] flex justify-center py-2 px-4 rounded-md shadow-sm text-xs font-medium text-black bg-[#FFB151] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-[226px] flex justify-center py-2 px-4 rounded-md shadow-sm text-xs font-medium text-black bg-[#FFB151] dark:bg-[#3CBDD1] disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isLoading ? (
                                             <span className="flex items-center">
@@ -152,8 +159,8 @@ export default function ForgotPasswordPage() {
             </div>
 
             <div className='absolute bottom-0 left-0 w-full h-[150px] overflow-hidden pointer-events-none'>
-                <span className='bg-[#FCB259] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
-                <span className='w-[247px] h-[247px] bg-[#FCB259]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
+                <span className='bg-[#FCB259] dark:bg-[#3CBDD1] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
+                <span className='w-[247px] h-[247px] bg-[#FCB259]/30 dark:bg-[#3CBDD1]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
                 </span>
             </div>
         </div>

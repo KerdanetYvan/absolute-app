@@ -46,16 +46,30 @@ interface UpdateUserBody {
   email?: string;
   username?: string;
   password?: string;
+  currentPassword?: string;
+  profilePicture?: string;
+  bannerPicture?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export async function PATCH(request: Request) {
   try {
     await connectDB();
     const body = await request.json();
-    const { email, username, password } = body as UpdateUserBody;
+    const { 
+      email, 
+      username, 
+      password, 
+      currentPassword,
+      profilePicture,
+      bannerPicture,
+      latitude,
+      longitude 
+    } = body as UpdateUserBody;
     
     // Vérification qu'au moins un champ est fourni
-    if (!email && !username && !password) {
+    if (!email && !username && !password && !profilePicture && !bannerPicture && latitude === undefined && longitude === undefined) {
       return NextResponse.json(
         { error: 'Au moins un champ doit être fourni pour la mise à jour' },
         { status: 400 }
@@ -91,6 +105,35 @@ export async function PATCH(request: Request) {
       }
     }
 
+    // Vérification si le nouveau nom d'utilisateur est déjà utilisé
+    if (username && username !== existingUser.username) {
+      const usernameExists = await User.findOne({ username });
+      if (usernameExists) {
+        return NextResponse.json(
+          { error: 'Ce nom d\'utilisateur est déjà utilisé' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Vérification du mot de passe actuel si un nouveau mot de passe est fourni
+    if (password) {
+      if (!currentPassword) {
+        return NextResponse.json(
+          { error: 'Le mot de passe actuel est requis pour changer le mot de passe' },
+          { status: 400 }
+        );
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, existingUser.passwordHash);
+      if (!isCurrentPasswordValid) {
+        return NextResponse.json(
+          { error: 'Le mot de passe actuel est incorrect' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Préparation des données à mettre à jour
     const updateData: any = {};
     if (email) updateData.email = email;
@@ -99,6 +142,10 @@ export async function PATCH(request: Request) {
       const saltRounds = 10;
       updateData.passwordHash = await bcrypt.hash(password, saltRounds);
     }
+    if (profilePicture !== undefined) updateData.profilePicture = profilePicture || null;
+    if (bannerPicture !== undefined) updateData.bannerPicture = bannerPicture || null;
+    if (latitude !== undefined) updateData.latitude = latitude;
+    if (longitude !== undefined) updateData.longitude = longitude;
 
     // Mise à jour de l'utilisateur
     const updatedUser = await User.findByIdAndUpdate(

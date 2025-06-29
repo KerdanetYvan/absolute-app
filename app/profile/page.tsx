@@ -105,10 +105,10 @@ export default function ProfilePage() {
 
     if (authLoading || loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen dark:bg-[#454141] flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Chargement du profil...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 dark:border-sky-500 mx-auto"></div>
+                    <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement du profil...</p>
                 </div>
             </div>
         );
@@ -116,19 +116,19 @@ export default function ProfilePage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+            <div className="min-h-screen dark:bg-[#454141] flex items-center justify-center">
+                <div className="max-w-md w-full p-8">
                     <div className="text-center">
                         <div className="text-red-500 mb-4">
                             <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.316 15.5c-.77.833.192 2.5 1.732 2.5z" />
                             </svg>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Erreur</h3>
-                        <p className="text-gray-600 mb-4">{error}</p>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Erreur</h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
                         <button
                             onClick={() => window.location.reload()}
-                            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors"
+                            className="bg-orange-500 dark:bg-sky-500 dark:hover:bg-sky-400 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors"
                         >
                             Réessayer
                         </button>
@@ -140,16 +140,16 @@ export default function ProfilePage() {
 
     if (!userProfile) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen dark:bg-[#454141] flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-gray-600">Aucun profil trouvé</p>
+                    <p className="text-gray-600 dark:text-gray-400">Aucun profil trouvé</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 mb-20">
+        <div className="min-h-screen dark:bg-[#454141] pb-20">
             <div className='pt-8 flex flex-col items-center justify-center gap-[22px]'>
                 <div className='relative w-full flex flex-col items-center justify-center pt-[20px]'>
                     {userProfile.bannerPicture ? (
@@ -159,7 +159,7 @@ export default function ProfilePage() {
                             className="absolute top-0 w-full h-[116px] object-cover z-0"
                         />
                     ) : (
-                        <div className="absolute top-0 w-full h-[116px] bg-gradient-to-br from-orange-400/50 to-orange-600/50 flex items-center justify-center z-0">
+                        <div className="absolute top-0 w-full h-[116px] bg-gradient-to-br from-orange-400/50 dark:from-sky-600/50 to-orange-600/50 dark:to-sky-400/50 flex items-center justify-center z-0">
 
                         </div>
                     )}
@@ -170,14 +170,14 @@ export default function ProfilePage() {
                         className="w-[138px] h-[138px] object-cover rounded-2xl z-10"
                         />
                     ) : (
-                        <div className="w-[138px] h-[138px] bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center z-10">
+                        <div className="w-[138px] h-[138px] bg-gradient-to-br from-orange-400 dark:from-sky-400 to-orange-600 dark:to-sky-600 rounded-2xl flex items-center justify-center z-10">
                             <span className="text-2xl font-bold text-white">
                                 {userProfile.username.charAt(0).toUpperCase()}
                             </span>
                         </div>
                     )}
                 </div>
-                <div id='username' className='font-bold text-2xl'>
+                <div id='username' className='font-bold text-2xl dark:text-white'>
                     {userProfile.username}
                     {userProfile.isAdmin && (
                         <span className="text-sm text-gray-500 ml-2">(Admin)</span>
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                         <span className="text-sm text-yellow-500 ml-2">(Email non vérifié)</span>
                     )}
                 </div>
-                <button onClick={() => redirect('/edit-profile')} className='h-[30px] w-[184px] rounded-[10px] bg-[#FEB157] font-bold'>Éditer le profil</button>
+                <button onClick={() => redirect('/edit-profile')} className='h-[30px] w-[184px] rounded-[10px] bg-[#FEB157] dark:bg-[#3CBDD1] font-bold'>Éditer le profil</button>
             </div>
 
             <Carroussel

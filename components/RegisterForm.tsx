@@ -124,7 +124,7 @@ export const RegisterForm = () => {
                                 value={formData.username}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] text-sm rounded-[6px] shadow-sm"
+                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] text-sm rounded-[6px] shadow-sm"
                                 placeholder="Votre nom d'utilisateur"
                             />
                         </div>
@@ -137,7 +137,7 @@ export const RegisterForm = () => {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] text-sm rounded-[6px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] text-sm rounded-[6px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="votre.email@exemple.com"
                             />
                         </div>
@@ -150,7 +150,7 @@ export const RegisterForm = () => {
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] text-sm rounded-[6px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] text-sm rounded-[6px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Entrer votre mot de passe"
                             />
                         </div>
@@ -163,7 +163,7 @@ export const RegisterForm = () => {
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] text-sm rounded-[6px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] text-sm rounded-[6px] shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Confirmer votre mot de passe"
                             />
                         </div>
@@ -184,7 +184,7 @@ export const RegisterForm = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFB151] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFB151] dark:bg-[#3CBDD1] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? (
                             <span className="flex items-center">

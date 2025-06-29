@@ -42,7 +42,7 @@ export const LoginForm = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] text-sm rounded-[6px] shadow-sm"
+                            className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] text-sm rounded-[6px] shadow-sm"
                             placeholder="Email"
                         />
                     </div>
@@ -54,12 +54,12 @@ export const LoginForm = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] text-sm rounded-[6px] shadow-sm"
+                            className="mt-1 block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] text-sm rounded-[6px] shadow-sm"
                             placeholder="Enter your password"
                         />
                     </div>
 
-                    <a href="/auth/forgot-password" className="text-gray-400 text-sm hover:underline">
+                    <a href="/auth/forgot-password" className="text-gray-400 dark:text-white text-sm hover:underline">
                         Mot de passe oublié ?
                     </a>
                 </div>
@@ -73,17 +73,17 @@ export const LoginForm = () => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFB151] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFB151] dark:bg-[#3CBDD1] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isLoading ? 'Connexion...' : 'Se connecter'}
                 </button>
 
-                <p className='text-center font-bold'>Ou</p>
+                <p className='text-center font-bold dark:text-white'>Ou</p>
 
                 <button
                     type="button"
                     onClick={() => window.location.href = '/auth/register'}
-                    className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFCF9B] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-[226px] flex justify-center mx-auto py-2 px-4 rounded-[14px] shadow-sm font-medium text-black bg-[#FFCF9B] dark:bg-[#3CBDD1] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     S'inscrire
                 </button>

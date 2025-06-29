@@ -237,23 +237,30 @@ export default function ResetPasswordPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col justify-center">
+        <div className="min-h-screen dark:bg-[#454141] flex flex-col justify-center">
             <div className="flex flex-col items-center justify-center text-center">
                 <Image
                     src="/logo.webp"
                     alt="Logo ANOMI"
                     width={50}
                     height={50}
-                    className="absolute mx-auto top-[12%]"
+                    className="dark:hidden absolute mx-auto top-[12%]"
+                />
+                <Image
+                    src='/logo_dark.webp'
+                    alt="Logo ANOMI"
+                    width={50}
+                    height={50}
+                    className="hidden dark:block absolute mx-auto top-[12%]"
                 />
             </div>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                         Nouveau mot de passe
                     </h2>
-                    <p className="text-gray-600 mb-8">
+                    <p className="text-gray-600 dark:text-gray-400 mb-8">
                         Choisissez un mot de passe sécurisé
                     </p>
                 </div>
@@ -271,7 +278,7 @@ export default function ResetPasswordPage() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 placeholder="Nouveau mot de passe"
                             />
                         </div>
@@ -285,7 +292,7 @@ export default function ResetPasswordPage() {
                                 required
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className="appearance-none block w-[226px] px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-[#828282] rounded-[6px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 placeholder="Confirmer le mot de passe"
                             />
                         </div>
@@ -300,7 +307,7 @@ export default function ResetPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-[226px] flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#FFB151] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-[226px] flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#FFB151] dark:bg-[#3CBDD1] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? (
                                     <span className="flex items-center">
@@ -320,8 +327,8 @@ export default function ResetPasswordPage() {
             </div>
 
             <div className='absolute bottom-0 left-0 w-full h-[150px] overflow-hidden pointer-events-none'>
-                <span className='bg-[#FCB259] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
-                <span className='w-[247px] h-[247px] bg-[#FCB259]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
+                <span className='bg-[#FCB259] dark:bg-[#3CBDD1] w-[298px] h-[298px] left-[-50px] top-[30px] rounded-full absolute z-0'></span>
+                <span className='w-[247px] h-[247px] bg-[#FCB259]/30 dark:bg-[#3CBDD1]/30 backdrop-blur-sm rounded-full absolute z-10 top-0 right-[-50px]'>
                 </span>
             </div>
         </div>
