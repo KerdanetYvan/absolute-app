@@ -121,7 +121,7 @@ export default function Carroussel({ titre, type, taille, list }: CarrousselProp
     // Rendu d'un article
     const renderArticle = (article: Article, key: string) => (
         <div key={key} className="flex-shrink-0">
-            <Link href={`/articles/${article.slug}`} className="block">
+            <Link href={`/article/${article.slug}`} className="block">
                 <div className={`${getItemSizeClasses()} bg-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer`}>
                     {article.coverImageUrl ? (
                         <Image
