@@ -48,6 +48,23 @@ const editorConfig = {
 // Composant Toolbar simple sans mémorisation pour éviter les problèmes
 function Toolbar() {
   const [editor] = useLexicalComposerContext();
+  const [isBold, setIsBold] = React.useState(false);
+  const [isItalic, setIsItalic] = React.useState(false);
+
+  React.useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          setIsBold(selection.hasFormat('bold'));
+          setIsItalic(selection.hasFormat('italic'));
+        } else {
+          setIsBold(false);
+          setIsItalic(false);
+        }
+      });
+    });
+  }, [editor]);
 
   const formatText = (format) => {
     editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
@@ -70,34 +87,39 @@ function Toolbar() {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
-      <button 
+    <div className="flex flex-wrap gap-2 mb-6 p-3 bg-gradient-to-r from-cyan-50/80 to-orange-50/80 dark:from-cyan-900/30 dark:to-orange-900/30 rounded-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md">
+      <button
         type="button"
-        onClick={() => formatText('bold')} 
-        className="px-4 py-2 bg-white/90 dark:bg-gray-700/90 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+        onClick={() => formatText('bold')}
+        className="px-4 py-2 border rounded-lg transition-all duration-200 shadow-sm focus:ring-2 focus:outline-none flex items-center gap-2 font-medium bg-white/90 dark:bg-gray-700/90 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-yellow-100 dark:hover:bg-yellow-800"
+        title="Gras"
       >
-        <strong>B</strong> Gras
+        <span className="text-lg">🖉</span> <strong>B</strong>
       </button>
-      <button 
+      <button
         type="button"
-        onClick={() => formatText('italic')} 
-        className="px-4 py-2 bg-white/90 dark:bg-gray-700/90 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+        onClick={() => formatText('italic')}
+        className="px-4 py-2 border rounded-lg transition-all duration-200 shadow-sm focus:ring-2 focus:outline-none flex items-center gap-2 font-medium bg-white/90 dark:bg-gray-700/90 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-yellow-100 dark:hover:bg-yellow-800"
+        title="Italique"
       >
-        <em>I</em> Italique
+        <span className="text-lg">𝑰</span> <em>I</em>
       </button>
-      <button 
+      <span className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-2" />
+      <button
         type="button"
-        onClick={() => insertHeading('h1')} 
-        className="px-4 py-2 bg-white/90 dark:bg-gray-700/90 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+        onClick={() => insertHeading('h1')}
+        className="px-4 py-2 bg-white/90 dark:bg-gray-700/90 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-cyan-100 dark:hover:bg-cyan-800 text-gray-700 dark:text-gray-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-cyan-400 focus:outline-none flex items-center gap-2"
+        title="Titre 1"
       >
-        H1 Titre 1
+        <span className="text-xl font-bold">H1</span> Titre 1
       </button>
-      <button 
+      <button
         type="button"
-        onClick={() => insertHeading('h2')} 
-        className="px-4 py-2 bg-white/90 dark:bg-gray-700/90 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+        onClick={() => insertHeading('h2')}
+        className="px-4 py-2 bg-white/90 dark:bg-gray-700/90 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-800 text-gray-700 dark:text-gray-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-orange-400 focus:outline-none flex items-center gap-2"
+        title="Titre 2"
       >
-        H2 Titre 2
+        <span className="text-lg font-bold">H2</span> Titre 2
       </button>
     </div>
   );
@@ -106,9 +128,11 @@ function Toolbar() {
 const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [markdownContent, setMarkdownContent] = useState(''); // Ajout état markdown
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
   const [coverImage, setCoverImage] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   
@@ -182,12 +206,13 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
       const text = $getRoot().getTextContent();
       contentRef.current = text;
       setContent(text);
-      
       // Stocke la structure JSON directement
       const jsonState = editorState.toJSON();
       structuredContentRef.current = jsonState;
+      // Génère le markdown à chaque changement
+      setMarkdownContent(convertStructureToMarkdown(jsonState));
     });
-  }, []);
+  }, [convertStructureToMarkdown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -214,6 +239,8 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
         author: '67ab097e33fd4f7db789f3f6', // TODO: Récupérer l'ID utilisateur authentifié
         category: category.trim() || 'Non catégorisé',
         tags: tags.trim() ? tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : [],
+        coverImage: coverImage.trim(),
+        videoUrl: videoUrl.trim(),
       };
 
       const response = await fetch('/api/articles', {
@@ -264,19 +291,20 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
     setCategory('');
     setTags('');
     setCoverImage('');
+    setVideoUrl('');
     contentRef.current = '';
     structuredContentRef.current = null;
     setFeedback({ type: '', message: '' });
   }, []);
 
   return (
-    <div className={`max-w-4xl mx-auto ${className}`}>
+    <div className={`max-w-3xl mx-auto ${className}`}>
       {/* Feedback Message */}
       {feedback.message && (
         <div className={`mb-6 p-4 rounded-xl border ${
-          feedback.type === 'success' 
-            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200' 
-            : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700 text-red-800 dark:text-red-200'
+          feedback.type === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : 'bg-red-50 border-red-200 text-red-800'
         }`}>
           <div className="flex items-center">
             <div className={`w-2 h-2 rounded-full mr-3 ${
@@ -287,150 +315,158 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-          {/* Title Input */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Titre de l'article *
-            </label>
-            <input
-              type="text"
-              placeholder="Entrez le titre de votre article..."
-              className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/90 dark:bg-gray-700/90 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 shadow-sm"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+        {/* Title Input */}
+        <div className="p-6 border-b border-gray-100">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Titre de l'article *
+          </label>
+          <input
+            type="text"
+            placeholder="Entrez le titre de votre article..."
+            className="w-full p-4 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
 
-          {/* Metadata Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Catégorie
-                </label>
-                <input
-                  type="text"
-                  placeholder="ex: Technologie, Sport..."
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/90 dark:bg-gray-700/90 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 shadow-sm"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Tags (séparés par des virgules)
-                </label>
-                <input
-                  type="text"
-                  placeholder="ex: javascript, react, web"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/90 dark:bg-gray-700/90 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 shadow-sm"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                />
-              </div>
+        {/* Metadata Section */}
+        <div className="p-6 border-b border-gray-100 bg-orange-50/40">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Catégorie
+              </label>
+              <input
+                type="text"
+                placeholder="ex: Technologie, Sport..."
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tags (séparés par des virgules)
+              </label>
+              <input
+                type="text"
+                placeholder="ex: javascript, react, web"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Lien de l'image de couverture (optionnel)
+              </label>
+              <input
+                type="url"
+                placeholder="https://.../image.jpg"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md mb-4"
+                value={coverImage}
+                onChange={(e) => setCoverImage(e.target.value)}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Lien de la vidéo (optionnel)
+              </label>
+              <input
+                type="url"
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
+              />
             </div>
           </div>
+        </div>
 
-          {/* Editor Section */}
-          <div className="p-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-              Contenu de l'article *
-            </label>
-            
-            <LexicalComposer initialConfig={editorConfig}>
-              <Toolbar />
-              <div className="border border-gray-300 dark:border-gray-600 rounded-xl bg-white/90 dark:bg-gray-700/90 min-h-[300px] focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-transparent transition-all duration-200 shadow-sm">
-                <RichTextPlugin
-                  contentEditable={
-                    <ContentEditable className="outline-none min-h-[280px] p-4 text-gray-900 dark:text-gray-100" />
-                  }
-                  placeholder={
-                    <div className="absolute top-4 left-4 text-gray-400 dark:text-gray-500 pointer-events-none">
-                      Commencez à écrire votre article ici...
-                    </div>
-                  }
-                  ErrorBoundary={({ children }) => <>{children}</>}
-                />
-                <HistoryPlugin />
-                <OnChangePlugin onChange={onChange} />
-              </div>
-            </LexicalComposer>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="p-6 bg-gradient-to-r from-gray-50/80 to-gray-100/80 dark:from-gray-800/80 dark:to-gray-900/80 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {title.length > 0 && `Titre: ${title.length} caractères`}
-              {content.length > 0 && (
-                <span className="ml-4">
-                  Contenu: {content.length} caractères
-                </span>
-              )}
-            </div>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={resetForm}
-                disabled={isSubmitting}
-                className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Réinitialiser
-              </button>
-              <button
-                type="submit"
-                disabled={!title.trim() || !content.trim() || isSubmitting}
-                className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-orange-500 hover:from-cyan-600 hover:to-orange-600 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Publication...
+        {/* Editor Section */}
+        <div className="p-6">
+          <label className="block text-sm font-medium text-gray-700 mb-4">
+            Contenu de l'article *
+          </label>
+          
+          <LexicalComposer initialConfig={editorConfig}>
+            <Toolbar />
+            <div className="relative border border-cyan-200 dark:border-cyan-700 rounded-xl bg-white/90 dark:bg-gray-700/90 min-h-[300px] focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-cyan-400 dark:focus-within:border-cyan-600 transition-all duration-200 shadow-md focus-within:shadow-lg overflow-hidden">
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable className="outline-none min-h-[280px] p-4 text-gray-900 dark:text-gray-100" />
+                }
+                placeholder={
+                  <div className="absolute top-4 left-4 text-gray-400 dark:text-gray-500 pointer-events-none">
+                    Commencez à écrire votre article ici...
                   </div>
-                ) : (
-                  'Publier l\'article'
-                )}
-              </button>
+                }
+                ErrorBoundary={({ children }) => <>{children}</>}
+              />
+              <HistoryPlugin />
+              <OnChangePlugin onChange={onChange} />
             </div>
+          </LexicalComposer>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="p-6 bg-orange-50/60 border-t border-gray-100 flex justify-between items-center">
+          <div className="text-sm text-gray-500 mx-8 px-8">
+            {title.length > 0 && `Titre: ${title.length} caractères`}
+            {content.length > 0 && (
+              <span className="ml-4">
+                Contenu: {content.length} caractères
+              </span>
+            )}
+          </div>
+          <div className="flex gap-6">
+            <button
+              type="button"
+              onClick={resetForm}
+              disabled={isSubmitting}
+              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md focus:ring-2 focus:ring-[#FFB151] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Réinitialiser
+            </button>
+            <button
+              type="submit"
+              disabled={!title.trim() || !content.trim() || isSubmitting}
+              className="px-8 py-3 bg-[#FFB151] hover:bg-orange-400 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            >
+              {isSubmitting ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Publication...
+                </div>
+              ) : (
+                'Publier l\'article'
+              )}
+            </button>
           </div>
         </div>
       </form>
 
-      {/* Preview Section */}
-      {showPreview && (title.trim() || content.trim()) && (
-        <div className="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-orange-500 rounded-full mr-3"></div>
-            Aperçu de l'article
-          </h3>
-          {title.trim() && (
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {title}
-            </h2>
-          )}
-          {category && (
-            <div className="mb-4">
-              <span className="inline-block px-3 py-1 bg-gradient-to-r from-cyan-100 to-orange-100 dark:from-cyan-900/30 dark:to-orange-900/30 text-cyan-800 dark:text-cyan-200 rounded-full text-sm font-medium">
-                {category}
-              </span>
-            </div>
-          )}
-          {tags && (
-            <div className="mb-4">
-              {tags.split(',').map((tag, index) => (
-                <span key={index} className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium mr-2 mb-2">
-                  #{tag.trim()}
-                </span>
-              ))}
-            </div>
-          )}
-          {content.trim() && (
-            <div className="text-gray-700 dark:text-gray-300 prose prose-gray dark:prose-invert max-w-none">
-              <div className="whitespace-pre-wrap leading-relaxed">{content}</div>
-            </div>
-          )}
+      {/* Preview Section : rendu riche du contenu */}
+      {showPreview && (markdownContent.trim()) && (
+        <div className="mt-8 bg-gradient-to-br from-white/90 to-gray-100/80 dark:from-gray-800/90 dark:to-gray-900/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-cyan-200/60 dark:border-cyan-700/60 p-6">
+          <div className="prose prose-gray dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+            {/* Affiche le contenu avec la mise en forme markdown (titres, gras, italique) */}
+            {markdownContent.split('\n').map((line, idx) => {
+              if (line.startsWith('# ')) {
+                return <h1 key={idx} className="text-3xl font-bold my-4">{line.replace(/^# /, '')}</h1>;
+              }
+              if (line.startsWith('## ')) {
+                return <h2 key={idx} className="text-2xl font-semibold my-3">{line.replace(/^## /, '')}</h2>;
+              }
+              // Gras et italique markdown
+              let formatted = line
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+              return <div key={idx} dangerouslySetInnerHTML={{ __html: formatted }} className="mb-2 leading-relaxed" />;
+            })}
+          </div>
         </div>
       )}
     </div>
