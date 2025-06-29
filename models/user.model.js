@@ -1,12 +1,35 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const userSchema = new mongoose.Schema({    username: {
+const userSchema = new mongoose.Schema({
+    username: {
         type: String,
         required: [true, "Le nom d'utilisateur est requis"],
         unique: true,
         trim: true,
         minlength: [3, "Le nom d'utilisateur doit contenir au moins 3 caractères"]
+    },
+    profilePicture: {
+        type: String,
+        default: null, // Default to null if no profile picture is provided
+        trim: true,
+        validate: {
+            validator: function(v) {
+                return /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/.test(v);
+            },
+            message: props => `${props.value} n'est pas une URL valide pour une image de profil!`
+        }
+    },
+    bannerPicture: {
+        type: String,
+        default: null, // Default to null if no banner picture is provided
+        trim: true,
+        validate: {
+            validator: function(v) {
+                return /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/.test(v);
+            },
+            message: props => `${props.value} n'est pas une URL valide pour une image de bannière!`
+        }
     },
     email: {
         type: String,
@@ -20,9 +43,42 @@ const userSchema = new mongoose.Schema({    username: {
         type: String,
         required: [true, "Le mot de passe est requis"]
     },
+    favSchools: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'School', // Assuming you have a School model
+        default: []
+    }],
     isAdmin: {
         type: Boolean,
         default: false,
+    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailVerificationToken: {
+        type: String,
+        default: null
+    },
+    emailVerificationExpires: {
+        type: Date,
+        default: null
+    },
+    passwordResetToken: {
+        type: String,
+        default: null
+    },
+    passwordResetExpires: {
+        type: Date,
+        default: null
+    },
+    latitude: {
+        type: Number,
+        default: null
+    },
+    longitude: {
+        type: Number,
+        default: null
     }
 }, {
     timestamps: true, // Adding automatically the creation date and modification
@@ -31,5 +87,4 @@ const userSchema = new mongoose.Schema({    username: {
 userSchema.plugin(uniqueValidator);
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
-
-module.exports = User;
+export default User;

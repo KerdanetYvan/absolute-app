@@ -2,15 +2,23 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import Article from '@/models/article.model.js';
+import User from '@/models/user.model.js'; // Import nécessaire pour le populate
+
+// Forcer l'enregistrement du modèle User si pas déjà fait
+if (!mongoose.models.User) {
+  require('@/models/user.model.js');
+}
 
 interface IArticle {
   title: string;
   content: string;
   author: mongoose.Types.ObjectId | string;
   category?: string;
-  tags?: string[];
-  likes?: number;
-  views?: number;
+  tags?: string[] | string;
+  likes?: number | string;
+  views?: number | string;
+  coverImageUrl?: string | null;
+  videoUrl?: string | null;
   _id?: string;
 }
 
@@ -22,7 +30,7 @@ export async function GET() {
     console.log('Connexion réussie, recherche des articles...');
     
     const articles = await Article.find({})
-      .populate('author', 'username email')
+      // .populate('author', 'username email') // Désactivé temporairement
       .sort({ createdAt: -1 })
       .lean()
       .exec();
@@ -48,7 +56,7 @@ export async function POST(request: Request) {
     const body = await request.json() as IArticle;
     console.log('Body reçu:', body);
     
-    const { title, content, author, category, tags } = body;    // Log du body reçu pour debug
+    const { title, content, author, category, tags, likes, views, coverImageUrl, videoUrl } = body;
     console.log('Body reçu dans la requête:', body);
     
     // Vérification des champs requis
@@ -79,7 +87,31 @@ export async function POST(request: Request) {
         { error: 'ID auteur invalide' },
         { status: 400 }
       );
-    }// Création du slug à partir du titre
+    }
+
+    // Gestion des types pour likes et views
+    let likesNumber = 0;
+    let viewsNumber = 0;
+    if (typeof likes === 'string') {
+      likesNumber = parseInt(likes.replace(/\s/g, ''), 10) || 0;
+    } else if (typeof likes === 'number') {
+      likesNumber = likes;
+    }
+    if (typeof views === 'string') {
+      viewsNumber = parseInt(views.replace(/\s/g, ''), 10) || 0;
+    } else if (typeof views === 'number') {
+      viewsNumber = views;
+    }
+
+    // Gestion du champ tags (string ou tableau)
+    let tagsArray: string[] = [];
+    if (Array.isArray(tags)) {
+      tagsArray = tags;
+    } else if (typeof tags === 'string' && tags.trim() !== '') {
+      tagsArray = tags.split(',').map((t: string) => t.trim());
+    }
+
+    // Création du slug à partir du titre
     const slug = title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
@@ -92,10 +124,14 @@ export async function POST(request: Request) {
       author,
       slug,
       category: category || 'Non catégorisé',
-      tags: tags || [],
-      likes: 0,
-      views: 0
-    });    // Récupérer l'article créé avec les informations de l'auteur
+      tags: tagsArray,
+      likes: likesNumber,
+      views: viewsNumber,
+      coverImageUrl: coverImageUrl || null,
+      videoUrl: videoUrl || null
+    });
+
+    // Récupérer l'article créé avec les informations de l'auteur
     const articleWithAuthor = await Article.findOne({ slug })
       .populate('author', 'username email')
       .exec();
