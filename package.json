@@ -10,6 +10,9 @@
     "create-test-user": "node scripts/create-test-user.mjs"
   },
   "dependencies": {
+    "@lexical/html": "^0.32.1",
+    "@lexical/react": "^0.32.1",
+    "@lexical/rich-text": "^0.32.1",
     "@tailwindcss/cli": "^4.1.10",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.10",
@@ -19,6 +22,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",
+    "lexical": "^0.32.1",
     "mongodb": "^6.17.0",
     "mongoose": "^7.8.7",
     "mongoose-unique-validator": "^4.0.1",

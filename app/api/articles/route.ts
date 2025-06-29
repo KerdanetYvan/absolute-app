@@ -85,24 +85,42 @@ export async function POST(request: Request) {
         { error: 'ID auteur invalide' },
         { status: 400 }
       );
-    }// Création du slug à partir du titre
-    const slug = title
+    }
+
+    // Fonction pour créer un slug unique
+    const createUniqueSlug = async (baseSlug: string): Promise<string> => {
+      let slug = baseSlug;
+      let counter = 1;
+      
+      while (await Article.findOne({ slug })) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+      
+      return slug;
+    };
+
+    // Création du slug de base à partir du titre
+    const baseSlug = title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
+
+    // Générer un slug unique
+    const uniqueSlug = await createUniqueSlug(baseSlug);
 
     // Création de l'article
     const newArticle = await Article.create({
       title,
       content,
       author,
-      slug,
+      slug: uniqueSlug,
       category: category || 'Non catégorisé',
       tags: tags || [],
       likes: 0,
       views: 0
     });    // Récupérer l'article créé avec les informations de l'auteur
-    const articleWithAuthor = await Article.findOne({ slug })
+    const articleWithAuthor = await Article.findOne({ slug: uniqueSlug })
       .populate('author', 'username email')
       .exec();
 
