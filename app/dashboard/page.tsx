@@ -1,7 +1,23 @@
+"use client";
+
 import Link from 'next/link';
 import { NavBarDashboard } from '../../components/NavBarDashboard';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { auth, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && (!auth || !auth.isAdmin)) {
+      router.replace('/');
+    }
+  }, [auth, isLoading, router]);
+
+  if (isLoading || !auth) return null;
+
   return (
     <div className="flex min-h-screen">
       <NavBarDashboard />
