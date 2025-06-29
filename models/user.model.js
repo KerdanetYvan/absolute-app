@@ -11,24 +11,36 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: null, // Default to null if no profile picture is provided
+        default: null,
         trim: true,
         validate: {
-            validator: function(v) {
-                return /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/.test(v);
+            validator: function(value) {
+                // Permettre null ou undefined (champ optionnel)
+                if (value === null || value === undefined || value === '') {
+                    return true;
+                }
+                // Si une valeur est fournie, vérifier que c'est une URL valide
+                const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+                return urlRegex.test(value);
             },
-            message: props => `${props.value} n'est pas une URL valide pour une image de profil!`
+            message: 'L\'URL de l\'image de profil doit être valide ou peut être vide'
         }
     },
     bannerPicture: {
         type: String,
-        default: null, // Default to null if no banner picture is provided
+        default: null,
         trim: true,
         validate: {
-            validator: function(v) {
-                return /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/.test(v);
+            validator: function(value) {
+                // Permettre null ou undefined (champ optionnel)
+                if (value === null || value === undefined || value === '') {
+                    return true;
+                }
+                // Si une valeur est fournie, vérifier que c'est une URL valide
+                const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+                return urlRegex.test(value);
             },
-            message: props => `${props.value} n'est pas une URL valide pour une image de bannière!`
+            message: 'L\'URL de l\'image de bannière doit être valide ou peut être vide'
         }
     },
     email: {

@@ -84,7 +84,8 @@ export const RegisterForm = () => {
                 }),
             });
 
-            const data = await response.json();            if (response.ok) {
+            const data = await response.json();
+            if (response.ok) {
                 if (data.emailSent) {
                     setSuccess(data.message || 'Inscription réussie ! Vérifiez votre email.');
                 } else {
