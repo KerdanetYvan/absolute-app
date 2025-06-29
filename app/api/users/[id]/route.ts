@@ -69,11 +69,7 @@ export async function PATCH(
       bannerPicture,
       latitude,
       longitude,
-<<<<<<< HEAD
       isAdmin
-=======
-      isAdmin 
->>>>>>> dashboard
     } = body as UpdateUserBody;
     
     // Vérification qu'au moins un champ est fourni
