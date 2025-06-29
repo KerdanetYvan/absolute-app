@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import schools from "@/data/schools.json";
 import GoBack from "@/components/GoBack";
 import Footer from "@/components/Footer";
+import Image from "next/image";
+import { use } from "react";
 
 interface Ecole {
   id: string;
@@ -20,8 +22,9 @@ interface Ecole {
   lon?: number;
 }
 
-export default function EcoleDetailPage({ params }: { params: { id: string } }) {
-  const ecole: Ecole | undefined = (schools as Ecole[]).find(e => e.id === params.id);
+export default function EcoleDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const ecole: Ecole | undefined = (schools as Ecole[]).find(e => e.id === id);
   if (!ecole) return notFound();
 
   return (

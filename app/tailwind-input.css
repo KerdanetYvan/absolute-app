@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Force generation of common classes */
+@layer base {
+  /* This forces Tailwind to include these base classes */
+  .bg-white { background-color: white; }
+  .bg-black { background-color: black; }
+  .text-white { color: white; }
+  .text-black { color: black; }
+  .text-gray-500 { color: rgb(107 114 128); }
+  .text-gray-600 { color: rgb(75 85 99); }
+  .text-gray-700 { color: rgb(55 65 81); }
+  .text-gray-800 { color: rgb(31 41 55); }
+  .text-gray-900 { color: rgb(17 24 39); }
+}
+
+@layer utilities {
+  /* Custom spacing for exact design requirements */
+  .pb-\[31px\] { padding-bottom: 31px; }
+  .mb-\[31px\] { margin-bottom: 31px; }
+}

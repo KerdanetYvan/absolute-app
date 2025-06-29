@@ -1,95 +1,139 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { GrSearch } from 'react-icons/gr';
+
+import Footer from '@/components/Footer';
+import Carroussel from '@/components/Carroussel';
+
+export default function page() {
+  const [searchFilter, setSearchFilter] = useState({
+    reportage: true,
+    ecole: true,
+    article: true,
+  });
+  const [reportagesArticles, setReportagesArticles] = useState<string[]>([]);
+  const [newsArticles, setNewsArticles] = useState<string[]>([]);
+  const [ecoles, setEcoles] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Récupérer les données depuis l'API
+    const fetchData = async () => {
+      try {
+        // Récupérer tous les articles
+        const articlesResponse = await fetch('/api/articles');
+        const articles = await articlesResponse.json();
+        
+        // Filtrer les articles par type
+        const reportages = articles
+          .filter((article: any) => article.type === 'reportage')
+          .map((article: any) => article._id);
+        
+        const news = articles
+          .filter((article: any) => article.type !== 'reportage')
+          .map((article: any) => article._id);
+        
+        setReportagesArticles(reportages);
+        setNewsArticles(news);
+        
+        // Récupérer toutes les écoles
+        const ecolesResponse = await fetch('/api/schools');
+        const ecolesData = await ecolesResponse.json();
+        const ecolesIds = ecolesData.map((ecole: any) => ecole.id); // Utiliser 'id' au lieu de '_id'
+        
+        setEcoles(ecolesIds);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données:', error);
+        // Valeurs par défaut en cas d'erreur
+        setReportagesArticles([]);
+        setNewsArticles([]);
+        setEcoles([]);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const ToggleEvent = (event: string) => {
+    if(searchFilter.reportage && searchFilter.ecole && searchFilter.article) {
+      setSearchFilter({
+        reportage: false,
+        ecole: false,
+        article: false,
+      });
+    }
+
+    setSearchFilter((prev) => ({
+      ...prev,
+      [event]: !prev[event as keyof typeof prev],
+    }));
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="max-w-2xl mx-auto text-center space-y-8">
-        {/* Logo/Brand */}
-        <div className="space-y-4">
-          <div className="mx-auto w-20 h-20 bg-gradient-to-r from-white to-indigo-50 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl font-bold">
-              <Image
-                src="/logo.webp"
-                alt="ANOMI Logo"
-                width={64}
-                height={64}
-              />
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white">
-            ANOMI
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 font-medium">
-            Toute l'info sur l'animation
-          </p>
+    <div className='min-h-screen py-8 w-full flex flex-col items-center bg-white dark:bg-[#454141] pb-20'>
+      <h1 className='text-2xl font-bold text-black dark:text-white pb-[31px]'>ANOMI</h1>
+      <div className=''>
+        <div className='h-12 bg-[#FEB157] dark:bg-[#3CBDD1] flex items-center justify-center gap-2 w-full max-w-md rounded-full px-4 mb-4'>
+          <GrSearch className='text-white flex-shrink-0' />
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            className="bg-transparent text-white placeholder-white/70 flex-1 px-2 py-2 focus:outline-none focus:ring-2 focus:ring-white/30 rounded"
+          />
         </div>
-
-        {/* Work in Progress Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-          <div className="space-y-6">
-            {/* Icon */}
-            <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-              </svg>
-            </div>
-            
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Travaux en Cours
-            </h2>
-            
-            <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-              Nous travaillons activement sur cette plateforme pour vous offrir la meilleure 
-              expérience possible dans le monde de l'animation. Restez connectés !
-            </p>
-
-            {/* Progress indicators */}
-            <div className="space-y-4 text-left">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Système d'authentification</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">API des articles et commentaires</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Interface utilisateur</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Fonctionnalités avancées</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Contact/Social */}
-        <div className="space-y-4">
-          <p className="text-gray-500 dark:text-gray-400">
-            Une question ? Un retour ?
-          </p>
-          <div className="flex justify-center space-x-4">
-            <a 
-              href="mailto:y_kerdanet@stu-digital-campus.fr" 
-              className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Nous contacter
-            </a>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="pt-8 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            © 2025 ANOMI - Plateforme d'information sur l'animation
-          </p>
+        <Link href="/ecoles-map" className='block py-2 px-4 rounded-full bg-[#FEB157] dark:bg-[#3CBDD1] font-bold text-black dark:text-white mb-4'>
+          Trouvez les écoles proche de chez vous
+        </Link>
+        <div className='w-full flex justify-around gap-2'>
+          <button
+            onClick={() => ToggleEvent('reportage')}
+            className={`py-1 px-3 rounded-md border border-[#FEB157] dark:border-[#3CBDD1] text-black dark:text-white` + (searchFilter.reportage ? ' bg-[#FEB157] dark:bg-[#3CBDD1]' : '')}
+          >
+            Reportage
+          </button>
+          <button
+            onClick={() => ToggleEvent('ecole')}
+            className={`py-1 px-3 rounded-md border border-[#FEB157] dark:border-[#3CBDD1] text-black dark:text-white` + (searchFilter.ecole ? ' bg-[#FEB157] dark:bg-[#3CBDD1]' : '')}
+          >
+            École
+          </button>
+          <button
+            onClick={() => ToggleEvent('article')}
+            className={`py-1 px-3 rounded-md border border-[#FEB157] dark:border-[#3CBDD1] text-black dark:text-white` + (searchFilter.article ? ' bg-[#FEB157] dark:bg-[#3CBDD1]' : '')}
+          >
+            News
+          </button>
         </div>
       </div>
+      {searchFilter.reportage && (
+        <Carroussel
+          titre="Reportages d'animation"
+          type='Articles'
+          taille='large'
+          list={reportagesArticles}
+        />
+      )}
+      
+      {searchFilter.ecole && (
+        <Carroussel
+        titre="Écoles d'animation"
+        type='Schools'
+        taille='small'
+        list={ecoles}
+        />
+      )}
+        
+      {searchFilter.article && (
+        <Carroussel
+          titre="Actualités"
+          type='Articles'
+          taille='medium'
+          list={newsArticles}
+        />
+      )}
+
+      <Footer />
     </div>
-  );
+  )
 }

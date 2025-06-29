@@ -7,7 +7,6 @@ import Image from 'next/image';
 
 import GoBack from '@/components/GoBack';
 import Carroussel from '@/components/Carroussel';
-import { ObjectId } from 'mongoose';
 
 interface Article {
   _id: string;
@@ -30,7 +29,7 @@ interface Article {
 
 export default function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const [article, setArticle] = useState<Article | null>(null);
-  const [otherArticles, setOtherArticles] = useState<ObjectId[]>([]);
+  const [otherArticles, setOtherArticles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();

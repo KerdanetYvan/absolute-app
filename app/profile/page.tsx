@@ -5,7 +5,6 @@ import { useAuth } from '@/hooks/useAuth';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
 import Carroussel from '@/components/Carroussel';
-import { ObjectId } from 'mongoose';
 import GoBack from '@/components/GoBack';
 
 interface UserProfile {
@@ -14,7 +13,7 @@ interface UserProfile {
     profilePicture: string;
     username: string;
     email: string;
-    favSchools: ObjectId[];
+    favSchools: string[];
     isEmailVerified: boolean;
     isAdmin: boolean;
     createdAt: string;
