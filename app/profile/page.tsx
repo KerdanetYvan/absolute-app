@@ -150,7 +150,7 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen dark:bg-[#454141] pb-20">
-            <GoBack />
+            
             <div className='pt-8 flex flex-col items-center justify-center gap-[22px]'>
                 <div className='relative w-full flex flex-col items-center justify-center pt-[20px]'>
                     {userProfile.bannerPicture ? (
@@ -211,7 +211,7 @@ export default function ProfilePage() {
                 type='Articles'
                 list={listIdArticles}
             />
-            
+            <GoBack />
             <Footer />
         </div>
     );
