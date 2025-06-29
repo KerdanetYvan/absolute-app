@@ -21,7 +21,7 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-    const { auth, isAuthenticated, isLoading: authLoading } = useAuth();
+    const { auth, isAuthenticated, isLoading: authLoading, logout } = useAuth();
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -187,7 +187,17 @@ export default function ProfilePage() {
                         <span className="text-sm text-yellow-500 ml-2">(Email non vérifié)</span>
                     )}
                 </div>
-                <button onClick={() => router.push('/edit-profile')} className='h-[30px] w-[184px] rounded-[10px] bg-[#FEB157] dark:bg-[#3CBDD1] font-bold'>Éditer le profil</button>
+                <div className="flex flex-col gap-3 w-full items-center">
+                    <button onClick={() => router.push('/edit-profile')} className='h-[30px] w-[184px] rounded-[10px] bg-[#FEB157] dark:bg-[#3CBDD1] font-bold'>
+                        Éditer le profil
+                    </button>
+                    <button 
+                        onClick={logout} 
+                        className='h-[30px] w-[184px] rounded-[10px] bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white font-bold transition-colors'
+                    >
+                        Se déconnecter
+                    </button>
+                </div>
             </div>
 
             <Carroussel
