@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/user.model';
-import { sendVerificationEmail } from '@/lib/email';
 
 // GET - Récupérer tous les utilisateurs
 export async function GET() {
@@ -19,7 +17,7 @@ export async function GET() {
   }
 }
 
-// POST - Créer un nouvel utilisateur avec vérification email
+// POST - Créer un nouvel utilisateur (sans vérification email)
 interface CreateUserBody {
   email: string;
   username: string;
@@ -86,53 +84,23 @@ export async function POST(request: Request) {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Génération du token de vérification email
-    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
-    const emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 heures    // Création de l'utilisateur
+    // Création de l'utilisateur (sans vérification email)
     const newUser = await User.create({
       email,
       username,
       passwordHash,
-      isEmailVerified: false,
-      emailVerificationToken,
-      emailVerificationExpires
-    });    // Envoi de l'email de vérification
-    let emailSent = false;
-    let emailPreviewUrl = null;
-    let emailError = null;
-    let emailHtmlContent = null;
-    
-    try {
-      const emailResult = await sendVerificationEmail(email, username, emailVerificationToken);
-      
-      if (emailResult.success) {
-        emailSent = true;
-        emailPreviewUrl = emailResult.previewUrl; // URL pour Ethereal Mail si disponible
-        emailHtmlContent = emailResult.htmlContent; // Contenu HTML de l'email
-        console.log('✅ Email de vérification envoyé avec succès');
-      } else {
-        emailError = emailResult.error;
-        console.warn('⚠️ Échec envoi email, mais utilisateur créé:', emailResult.error);
-      }    } catch (emailErrorCatch) {
-      emailError = emailErrorCatch instanceof Error ? emailErrorCatch.message : 'Erreur inconnue lors de l\'envoi d\'email';
-      console.error('❌ Erreur envoi email:', emailErrorCatch);
-      // On continue même si l'email échoue
-    }
+      isEmailVerified: true, // Directement vérifié pour un projet d'étude
+      // Pas de token de vérification nécessaire
+    });
 
     // Retourner l'utilisateur sans les champs sensibles
     const userResponse = JSON.parse(JSON.stringify(newUser));
-    const { passwordHash: _, emailVerificationToken: __, ...userWithoutSensitiveData } = userResponse;
+    const { passwordHash: _, ...userWithoutSensitiveData } = userResponse;
     
     const response = {
       user: userWithoutSensitiveData,
-      message: emailSent 
-        ? 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.'
-        : 'Compte créé avec succès, mais l\'email de vérification n\'a pas pu être envoyé. Vous pouvez demander un nouvel email plus tard.',
-      requiresEmailVerification: true,
-      emailSent,
-      ...(emailError && { emailError }),
-      ...(emailPreviewUrl && process.env.NODE_ENV !== 'production' && { emailPreviewUrl }),
-      ...(emailHtmlContent && { emailHtmlContent })  // Ajouter le contenu HTML
+      message: 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.',
+      requiresEmailVerification: false,
     };
 
     return NextResponse.json(response, { status: 201 });

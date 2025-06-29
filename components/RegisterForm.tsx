@@ -19,8 +19,6 @@ export const RegisterForm = () => {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [emailContent, setEmailContent] = useState('');
-    const [showEmailModal, setShowEmailModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -88,28 +86,12 @@ export const RegisterForm = () => {
 
             const data = await response.json();
             if (response.ok) {
-                if (data.emailSent) {
-                    setSuccess(data.message || 'Inscription réussie ! Vérifiez votre email.');
-                    
-                    // Afficher le contenu de l'email si disponible
-                    if (data.emailHtmlContent) {
-                        setEmailContent(data.emailHtmlContent);
-                        setShowEmailModal(true);
-                    }
-                } else {
-                    setSuccess(data.message || 'Inscription réussie ! Cependant, l\'email de vérification n\'a pas pu être envoyé.');
-                    console.warn('Email non envoyé:', data.emailError);
-                }
+                setSuccess(data.message || 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
                 
-                // Afficher l'URL de prévisualisation en développement
-                if (data.emailPreviewUrl && process.env.NODE_ENV !== 'production') {
-                    console.log('📧 Prévisualisation email:', data.emailPreviewUrl);
-                }
-                
-                // Redirection vers une page de confirmation après 5 secondes
+                // Redirection vers la page de connexion après inscription réussie
                 setTimeout(() => {
-                    router.push('/auth/check-email');
-                }, 5000);
+                    router.push('/auth/login');
+                }, 2000);
             } else {
                 setError(data.error || 'Erreur lors de l\'inscription');
             }
@@ -209,56 +191,6 @@ export const RegisterForm = () => {
                     </button>
                 </form>
             </div>
-
-            {/* Modal d'affichage de l'email */}
-            {showEmailModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl">
-                        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                📧 Email de vérification envoyé
-                            </h3>
-                            <button
-                                onClick={() => setShowEmailModal(false)}
-                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <div className="p-4 overflow-y-auto max-h-[70vh]">
-                            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
-                                <p className="text-sm text-blue-800 dark:text-blue-200">
-                                    <span className="font-medium">📍 Mode développement :</span> Voici le contenu de l'email qui vous a été envoyé.
-                                    En production, vous recevriez cet email dans votre boîte de réception.
-                                </p>
-                            </div>
-                            
-                            <div 
-                                className="border rounded-md overflow-hidden bg-white"
-                                dangerouslySetInnerHTML={{ __html: emailContent }}
-                            />
-                        </div>
-                        
-                        <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-700">
-                            <button
-                                onClick={() => setShowEmailModal(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
-                            >
-                                Fermer
-                            </button>
-                            <button
-                                onClick={() => router.push('/auth/check-email')}
-                                className="px-4 py-2 text-sm font-medium text-white bg-[#FFB151] dark:bg-[#3CBDD1] hover:bg-orange-400 dark:hover:bg-sky-400 rounded-md"
-                            >
-                                Continuer
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
