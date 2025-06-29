@@ -8,16 +8,32 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const filePath = path.join(process.cwd(), 'data', 'schools.json');
-    const data = await readFile(filePath, 'utf-8');
+    
+    // Essayer d'abord le fichier dans public/ (accessible en production)
+    let data;
+    try {
+      const publicPath = path.join(process.cwd(), 'public', 'schools.json');
+      data = await readFile(publicPath, 'utf-8');
+    } catch (publicError) {
+      // Fallback vers le dossier data/
+      const dataPath = path.join(process.cwd(), 'data', 'schools.json');
+      data = await readFile(dataPath, 'utf-8');
+    }
+    
     const schools = JSON.parse(data);
     const school = schools.find((e: any) => e.id === id);
+    
     if (!school) {
       return NextResponse.json({ error: 'École non trouvée' }, { status: 404 });
     }
+    
     return NextResponse.json(school);
   } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la récupération de l\'école' }, { status: 500 });
+    console.error('Erreur lors de la récupération de l\'école:', error);
+    return NextResponse.json({ 
+      error: 'Erreur lors de la récupération de l\'école',
+      details: (error as any)?.message 
+    }, { status: 500 });
   }
 }
 

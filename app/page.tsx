@@ -38,9 +38,22 @@ export default function page() {
         setNewsArticles(news);
         
         // Récupérer toutes les écoles
+        console.log('🏫 Récupération des écoles...');
         const ecolesResponse = await fetch('/api/schools');
+        console.log('🏫 Statut réponse écoles:', ecolesResponse.status);
+        
+        if (!ecolesResponse.ok) {
+          const errorData = await ecolesResponse.text();
+          console.error('❌ Erreur API écoles:', errorData);
+          throw new Error(`Erreur récupération écoles: ${ecolesResponse.status}`);
+        }
+        
         const ecolesData = await ecolesResponse.json();
+        console.log('🏫 Écoles récupérées:', ecolesData?.length || 0, 'écoles');
+        console.log('🏫 Première école exemple:', ecolesData[0]);
+        
         const ecolesIds = ecolesData.map((ecole: any) => ecole.id); // Utiliser 'id' au lieu de '_id'
+        console.log('🏫 IDs des écoles:', ecolesIds.slice(0, 5)); // Afficher les 5 premiers IDs
         
         setEcoles(ecolesIds);
       } catch (error) {
