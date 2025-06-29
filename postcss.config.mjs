@@ -1,7 +1,8 @@
 const config = {
   plugins: {
     "@tailwindcss/postcss": {
-      config: "./tailwind.config.ts"
+      config: "./tailwind.config.ts",
+      input: "./app/tailwind-input.css"
     }
   },
 };

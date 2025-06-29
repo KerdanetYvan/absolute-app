@@ -23,12 +23,17 @@ interface Article {
 }
 
 interface School {
-    _id: string;
-    name: string;
-    address: string;
-    city: string;
-    website: string;
-    createdAt: string;
+    _id?: string;
+    id?: string;
+    name?: string;
+    nom?: string; // Champ français pour le nom
+    address?: string;
+    adresse?: string; // Champ français pour l'adresse
+    city?: string;
+    website?: string;
+    site?: string; // Champ français pour le site web
+    logo?: string; // Chemin vers le logo
+    createdAt?: string;
 }
 
 type CarouselItem = Article | School;
@@ -45,6 +50,7 @@ export default function Carroussel({ titre, type, taille, list }: CarrousselProp
     const [items, setItems] = useState<CarouselItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
     // Charger les données depuis l'API
     useEffect(() => {
@@ -113,8 +119,8 @@ export default function Carroussel({ titre, type, taille, list }: CarrousselProp
     }
 
     // Rendu d'un article
-    const renderArticle = (article: Article) => (
-        <div key={article._id} className="flex-shrink-0">
+    const renderArticle = (article: Article, key: string) => (
+        <div key={key} className="flex-shrink-0">
             <Link href={`/articles/${article.slug}`} className="block">
                 <div className={`${getItemSizeClasses()} bg-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer`}>
                     {article.coverImageUrl ? (
@@ -137,18 +143,41 @@ export default function Carroussel({ titre, type, taille, list }: CarrousselProp
         </div>
     );
 
-    // Rendu d'une école
-    const renderSchool = (school: School) => (
-        <div key={school._id} className="flex-shrink-0">
-            <Link href={`/schools/${school._id}`} className="block">
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-orange-100 dark:from-sky-100 to-orange-200 dark:to-sky-200 rounded-2xl flex items-center justify-center shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-                    <svg className="w-8 h-8 md:w-12 md:h-12 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                </div>
-            </Link>
-        </div>
-    );
+    // Rendu d'une école 
+    const renderSchool = (school: School, key: string) => {
+        const schoolName = school.name || school.nom || 'École';
+        const logoPath = school.logo;
+        const hasImageError = logoPath && imageErrors.has(logoPath);
+        
+        const handleImageError = () => {
+            if (logoPath) {
+                setImageErrors(prev => new Set(prev).add(logoPath));
+            }
+        };
+        
+        return (
+            <div key={key} className="flex-shrink-0">
+                <Link href={`/schools/${school.id || school._id}`} className="block">
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-orange-100 dark:from-sky-100 to-orange-200 dark:to-sky-200 rounded-2xl flex items-center justify-center shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+                        {logoPath && !hasImageError ? (
+                            <Image
+                                src={logoPath}
+                                alt={`Logo ${schoolName}`}
+                                width={160}
+                                height={160}
+                                className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                                onError={handleImageError}
+                            />
+                        ) : (
+                            <svg className="w-8 h-8 md:w-12 md:h-12 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        )}
+                    </div>
+                </Link>
+            </div>
+        );
+    };
 
     if (loading) {
         return (
@@ -185,11 +214,15 @@ export default function Carroussel({ titre, type, taille, list }: CarrousselProp
             
             <div className="overflow-x-auto scrollbar-hide">
                 <div className="flex space-x-4 px-4 pb-2">
-                    {items.map((item) => 
-                        type === 'Articles' 
-                            ? renderArticle(item as Article)
-                            : renderSchool(item as School)
-                    )}
+                    {items.map((item) => {
+                        const key = type === 'Articles' 
+                            ? (item as Article)._id 
+                            : (item as School).id || (item as School)._id || 'unknown';
+                        
+                        return type === 'Articles' 
+                            ? renderArticle(item as Article, key || 'unknown')
+                            : renderSchool(item as School, key);
+                    })}
                 </div>
             </div>
         </div>
