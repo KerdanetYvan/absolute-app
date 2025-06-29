@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
-import Carroussel from '@/components/Carroussel';
+import Link from 'next/link';
+import Image from 'next/image';
 import GoBack from '@/components/GoBack';
+import { schoolsData } from '@/lib/schools-data';
 
 interface UserProfile {
     _id: string;
@@ -26,7 +28,8 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [hasRedirected, setHasRedirected] = useState(false);
-    const [allArticles, setAllArticles] = useState<any[]>([]);
+    const [articles, setArticles] = useState<any[]>([]);
+    const [articlesLoading, setArticlesLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -42,35 +45,11 @@ export default function ProfilePage() {
             fetchUserProfile(auth._id);
         }
 
-        const fetchArticles = async () => {
-            try {
-                setLoading(true);
-                console.log('🔄 Tentative de récupération des articles...');
-                
-                const response = await fetch(`/api/articles`);
-                console.log('📊 Statut réponse:', response.status);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Erreur API:', errorText);
-                    throw new Error(`Erreur ${response.status}: ${errorText}`);
-                }
-                
-                const data = await response.json();
-                console.log('✅ Articles récupérés:', data);
-                setAllArticles(data);
-                
-            } catch (error: any) {
-                console.error('❌ Erreur lors de la récupération:', error);
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchArticles();
+        // Fetch des articles
+        if (!authLoading && isAuthenticated) {
+            fetchArticles();
+        }
     }, [auth?._id, isAuthenticated, authLoading, userProfile, hasRedirected]);
-
-    const listIdArticles = allArticles.map((article: any) => article._id);
 
     const fetchUserProfile = async (userId: string) => {
         try {
@@ -100,6 +79,36 @@ export default function ProfilePage() {
             setError(err.message || 'Erreur inconnue');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchArticles = async () => {
+        try {
+            setArticlesLoading(true);
+            console.log('📰 Récupération des articles...');
+            
+            const response = await fetch('/api/articles');
+            
+            if (!response.ok) {
+                console.warn('⚠️ Erreur API articles:', response.status);
+                return; // Échouer silencieusement
+            }
+            
+            const articlesData = await response.json();
+            console.log('✅ Articles récupérés:', articlesData?.length || 0);
+            
+            // Prendre les 5 derniers articles (triés par date de création)
+            const sortedArticles = articlesData
+                .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .slice(0, 5);
+            
+            setArticles(sortedArticles);
+            
+        } catch (err: any) {
+            console.warn('⚠️ Erreur lors de la récupération des articles:', err);
+            // Échouer silencieusement - pas d'erreur critique
+        } finally {
+            setArticlesLoading(false);
         }
     };
 
@@ -200,17 +209,113 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            <Carroussel
-                titre="Écoles d'animation suivies"
-                type='Schools'
-                list={userProfile.favSchools}
-            />
+            {/* Écoles favorites */}
+            <div className="w-full py-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 px-4">Écoles d'animation suivies</h2>
+                
+                {userProfile.favSchools && userProfile.favSchools.length > 0 ? (
+                    <div className="overflow-x-auto scrollbar-hide">
+                        <div className="flex space-x-4 px-4 pb-2">
+                            {userProfile.favSchools.map((schoolId) => {
+                                const school = schoolsData.find(s => s.id === schoolId);
+                                if (!school) return null;
+                                
+                                return (
+                                    <div key={school.id} className="flex-shrink-0">
+                                        <Link href={`/ecoles/${school.id}`} className="block">
+                                            <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-orange-100 dark:from-sky-100 to-orange-200 dark:to-sky-200 rounded-2xl flex items-center justify-center shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+                                                {school.logo ? (
+                                                    <Image
+                                                        src={school.logo}
+                                                        alt={`Logo ${school.nom}`}
+                                                        width={160}
+                                                        height={160}
+                                                        className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                                                    />
+                                                ) : (
+                                                    <svg className="w-8 h-8 md:w-12 md:h-12 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                    </svg>
+                                                )}
+                                            </div>
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="text-center py-8">
+                        <div className="text-gray-400 dark:text-gray-200 mb-4">
+                            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <p className="text-gray-500 dark:text-gray-200">
+                            Aucune école suivie pour le moment
+                        </p>
+                        <Link href="/ecoles-map" className="inline-block mt-4 bg-orange-500 dark:bg-sky-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 dark:hover:bg-sky-600 transition-colors">
+                            Découvrir les écoles
+                        </Link>
+                    </div>
+                )}
+            </div>
 
-            <Carroussel
-                titre='Les derniers articles'
-                type='Articles'
-                list={listIdArticles}
-            />
+            {/* Section des derniers articles */}
+            <div className="w-full py-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 px-4">Les derniers articles</h2>
+                
+                {articlesLoading ? (
+                    <div className="flex justify-center items-center h-32">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 dark:border-sky-500"></div>
+                    </div>
+                ) : articles.length > 0 ? (
+                    <div className="overflow-x-auto scrollbar-hide">
+                        <div className="flex space-x-4 px-4 pb-2">
+                            {articles.map((article) => (
+                                <div key={article._id} className="flex-shrink-0">
+                                    <Link href={`/article/${article.slug}`} className="block">
+                                        <div className="w-[217px] h-[121px] bg-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                                            {article.coverImageUrl ? (
+                                                <Image
+                                                    src={article.coverImageUrl}
+                                                    alt={article.title}
+                                                    width={217}
+                                                    height={121}
+                                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 dark:from-sky-100 to-orange-200 dark:to-sky-200">
+                                                    <div className="text-center p-3">
+                                                        <svg className="w-6 h-6 mx-auto mb-1 text-orange-400 dark:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        <h3 className="text-xs font-medium text-gray-800 dark:text-gray-200 line-clamp-2">
+                                                            {article.title}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="text-center py-8">
+                        <div className="text-gray-400 dark:text-gray-200 mb-4">
+                            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7" />
+                            </svg>
+                        </div>
+                        <p className="text-gray-500 dark:text-gray-200">
+                            Aucun article à afficher
+                        </p>
+                    </div>
+                )}
+            </div>
+            
             <GoBack />
             <Footer />
         </div>
