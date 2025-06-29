@@ -128,6 +128,7 @@ function Toolbar() {
 const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [markdownContent, setMarkdownContent] = useState(''); // Ajout état markdown
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
   const [coverImage, setCoverImage] = useState('');
@@ -205,12 +206,13 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
       const text = $getRoot().getTextContent();
       contentRef.current = text;
       setContent(text);
-      
       // Stocke la structure JSON directement
       const jsonState = editorState.toJSON();
       structuredContentRef.current = jsonState;
+      // Génère le markdown à chaque changement
+      setMarkdownContent(convertStructureToMarkdown(jsonState));
     });
-  }, []);
+  }, [convertStructureToMarkdown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -447,11 +449,11 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
       </form>
 
       {/* Preview Section : rendu riche du contenu */}
-      {showPreview && content.trim() && (
+      {showPreview && (markdownContent.trim()) && (
         <div className="mt-8 bg-gradient-to-br from-white/90 to-gray-100/80 dark:from-gray-800/90 dark:to-gray-900/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-cyan-200/60 dark:border-cyan-700/60 p-6">
           <div className="prose prose-gray dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
             {/* Affiche le contenu avec la mise en forme markdown (titres, gras, italique) */}
-            {content.split('\n').map((line, idx) => {
+            {markdownContent.split('\n').map((line, idx) => {
               if (line.startsWith('# ')) {
                 return <h1 key={idx} className="text-3xl font-bold my-4">{line.replace(/^# /, '')}</h1>;
               }
