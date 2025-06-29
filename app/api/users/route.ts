@@ -100,6 +100,7 @@ export async function POST(request: Request) {
     let emailSent = false;
     let emailPreviewUrl = null;
     let emailError = null;
+    let emailHtmlContent = null;
     
     try {
       const emailResult = await sendVerificationEmail(email, username, emailVerificationToken);
@@ -107,6 +108,7 @@ export async function POST(request: Request) {
       if (emailResult.success) {
         emailSent = true;
         emailPreviewUrl = emailResult.previewUrl; // URL pour Ethereal Mail si disponible
+        emailHtmlContent = emailResult.htmlContent; // Contenu HTML de l'email
         console.log('✅ Email de vérification envoyé avec succès');
       } else {
         emailError = emailResult.error;
@@ -129,7 +131,8 @@ export async function POST(request: Request) {
       requiresEmailVerification: true,
       emailSent,
       ...(emailError && { emailError }),
-      ...(emailPreviewUrl && process.env.NODE_ENV !== 'production' && { emailPreviewUrl })
+      ...(emailPreviewUrl && process.env.NODE_ENV !== 'production' && { emailPreviewUrl }),
+      ...(emailHtmlContent && { emailHtmlContent })  // Ajouter le contenu HTML
     };
 
     return NextResponse.json(response, { status: 201 });
