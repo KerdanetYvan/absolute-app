@@ -1,13 +1,11 @@
 import { NavBarDashboard } from '../../../components/NavBarDashboard';
+import SchoolList from '@/components/SchoolList';
 
-export default function DashboardPage() {
+export default function DashboardSchoolPage() {
   return (
     <div style={{ display: 'flex' }}>
       <NavBarDashboard />
-      <main style={{ flex: 1, padding: '2rem' }}>
-        {/* Contenu principal du dashboard */}
-        <h1>Liste des écoles</h1>
-      </main>
+      <SchoolList />
     </div>
   );
 }
