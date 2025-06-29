@@ -1,6 +1,9 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import schools from "@/data/schools.json";
-import Image from "next/image";
+import GoBack from "@/components/GoBack";
+import Footer from "@/components/Footer";
 
 interface Ecole {
   id: string;
@@ -22,26 +25,9 @@ export default function EcoleDetailPage({ params }: { params: { id: string } }) 
   if (!ecole) return notFound();
 
   return (
-    <div style={{ background: '#fff', minHeight: '100dvh', padding: 0, fontFamily: 'inherit', position: 'relative' }}>
-      {/* Bouton retour */}
-      <a href="/ecoles-map" style={{
-        position: 'absolute',
-        top: 18,
-        left: 18,
-        zIndex: 10,
-        width: 44,
-        height: 44,
-        borderRadius: '50%',
-        background: '#FFB13B',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 2px 8px #ffb13b33',
-        textDecoration: 'none',
-        transition: 'background 0.2s',
-      }} aria-label="Retour à la carte">
-        <img src="/img/icon/arrow-left.svg" alt="Retour" style={{ width: 26, height: 26, display: 'block' }} />
-      </a>
+    <div className="bg-[#fff] text-[#181B2A] dark:bg-[#454141] dark:text-white ecole-detail-container" style={{ minHeight: '100vh', fontFamily: 'inherit', width: '100vw', boxSizing: 'border-box', position: 'relative' }}>
+      {/* GoBack bouton fixe */}
+      <GoBack />
       {/* Image principale en haut */}
       {ecole.img_ecoles && (
         <div style={{ maxWidth: 420, margin: '0 auto', padding: '24px 24px 0 24px' }}>
@@ -50,29 +36,42 @@ export default function EcoleDetailPage({ params }: { params: { id: string } }) 
       )}
       {/* Titre et résumé */}
       <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ fontWeight: 700, fontSize: 22, textTransform: 'uppercase', letterSpacing: 1, color: '#181B2A', marginBottom: 8 }}>{ecole.nom}</div>
-        <div style={{ fontSize: 14, color: '#444', marginBottom: 16 }}>{ecole.resume}</div>
-        
+        <div className="font-bold text-[22px] uppercase tracking-wider mb-2 text-[#181B2A] dark:text-white">{ecole.nom}</div>
+        <div className="text-[14px] mb-4 text-[#444] dark:text-white">{ecole.resume}</div>
       </div>
       {/* Bloc Infos */}
       <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ fontWeight: 700, fontSize: 16, margin: '18px 0 8px 0', color: '#181B2A' }}>Infos</div>
-        <div style={{ fontSize: 14, color: '#444', marginBottom: 0, lineHeight: 1.5 }}>{ecole.description_detaillee || ecole.description}</div>
-        <div style={{ fontSize: 14, color: '#444', lineHeight: 1.5, marginBottom: 8 }}>{ecole.description}</div>
+        <div className="font-bold text-[16px] mt-5 mb-2 text-[#181B2A] dark:text-white">Infos</div>
+        <div className="text-[14px] mb-0 leading-snug text-[#444] dark:text-white">{ecole.description_detaillee || ecole.description}</div>
+        <div className="text-[14px] leading-snug mb-2 text-[#444] dark:text-white">{ecole.description}</div>
       </div>
       {/* Section logos populaires */}
-      <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 24px 24px 24px' }}>
-        <div style={{ fontWeight: 700, fontSize: 16, margin: '18px 0 10px 0', color: '#181B2A' }}>
+      <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 24px 24px 24px', paddingBottom: 120 }}>
+        <div className="font-bold text-[16px] mt-5 mb-2 text-[#181B2A] dark:text-white">
           Populaire sur {ecole.nom.split(' ')[0]}
         </div>
         <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
           {(schools as Ecole[]).map(e => (
             e.logo ? (
-              <img key={e.id} src={e.logo} alt={e.nom} style={{ width: 54, height: 54, objectFit: 'contain', borderRadius: 10, background: '#f5f5f5', boxShadow: '0 2px 8px #0001' }} />
+              <img key={e.id} src={e.logo} alt={e.nom} style={{ width: 54, height: 54, objectFit: 'contain', borderRadius: 10, background: '#f5f5f5', boxShadow: '0 2px 8px #0001' }} className="dark:bg-gray-800" />
             ) : null
           ))}
         </div>
       </div>
+      <Footer />
+      <style jsx global>{`
+        @media (min-width: 1024px) {
+          .ecole-detail-container {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            min-height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            left: 0 !important;
+            top: 0 !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
