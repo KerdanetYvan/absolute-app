@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import schools from "@/data/schools.json";
+import { schoolsData } from "@/lib/schools-data";
 import GoBack from "@/components/GoBack";
 import Footer from "@/components/Footer";
 import Image from "next/image";
@@ -24,7 +24,7 @@ interface Ecole {
 
 export default function EcoleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const ecole: Ecole | undefined = (schools as Ecole[]).find(e => e.id === id);
+  const ecole: Ecole | undefined = schoolsData.find(e => e.id === id);
   if (!ecole) return notFound();
 
   return (
@@ -54,7 +54,7 @@ export default function EcoleDetailPage({ params }: { params: Promise<{ id: stri
           Populaire sur {ecole.nom.split(' ')[0]}
         </div>
         <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
-          {(schools as Ecole[]).map(e => (
+          {schoolsData.map(e => (
             e.logo ? (
               <img key={e.id} src={e.logo} alt={e.nom} style={{ width: 54, height: 54, objectFit: 'contain', borderRadius: 10, background: '#f5f5f5', boxShadow: '0 2px 8px #0001' }} className="dark:bg-gray-800" />
             ) : null

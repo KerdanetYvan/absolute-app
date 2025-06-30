@@ -157,7 +157,7 @@ export default function Carroussel({ titre, type, taille, list }: CarrousselProp
         
         return (
             <div key={key} className="flex-shrink-0">
-                <Link href={`/schools/${school.id || school._id}`} className="block">
+                <Link href={`/ecoles/${school.id || school._id}`} className="block">
                     <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-orange-100 dark:from-sky-100 to-orange-200 dark:to-sky-200 rounded-2xl flex items-center justify-center shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
                         {logoPath && !hasImageError ? (
                             <Image
