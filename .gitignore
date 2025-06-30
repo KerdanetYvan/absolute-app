@@ -53,3 +53,5 @@ components/test-*.ts
 scripts/test-*.mjs
 scripts/test-*.js
 test
+test-*/
+*-test/

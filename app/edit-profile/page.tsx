@@ -6,19 +6,6 @@ import Footer from '@/components/Footer';
 import GoBack from '@/components/GoBack';
 import { useRouter } from 'next/navigation';
 
-interface UserProfile {
-    _id: string;
-    username: string;
-    email: string;
-    profilePicture?: string | null;
-    bannerPicture?: string | null;
-    latitude?: number | null;
-    longitude?: number | null;
-    isEmailVerified: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
-
 interface FormData {
     username: string;
     email: string;
@@ -33,12 +20,9 @@ interface FormData {
 
 export default function EditProfilePage() {
     const { auth, isAuthenticated, isLoading: authLoading } = useAuth();
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const [hasRedirected, setHasRedirected] = useState(false);
     const router = useRouter();
 
     const [formData, setFormData] = useState<FormData>({
@@ -54,18 +38,34 @@ export default function EditProfilePage() {
     });
 
     useEffect(() => {
+        console.log('🔄 Effect principal déclenché');
+        console.log('  - authLoading:', authLoading);
+        console.log('  - isAuthenticated:', isAuthenticated);
+        console.log('  - auth:', auth);
+        
         // Redirection si non authentifié
-        if (!authLoading && !isAuthenticated && !hasRedirected) {
-            setHasRedirected(true);
+        if (!authLoading && !isAuthenticated) {
+            console.log('🚨 Redirection vers login - utilisateur non authentifié');
             router.push('/auth/login');
             return;
         }
         
-        // Fetch du profil utilisateur si authentifié
-        if (!authLoading && isAuthenticated && auth?._id && !userProfile) {
-            fetchUserProfile(auth._id);
+        // Pré-remplir le formulaire avec les données auth
+        if (!authLoading && isAuthenticated && auth) {
+            console.log('� Pré-remplissage du formulaire avec les données auth');
+            setFormData({
+                username: auth.username || '',
+                email: auth.email || '',
+                profilePicture: auth.profilePicture || '',
+                bannerPicture: auth.bannerPicture || '',
+                latitude: auth.latitude?.toString() || '',
+                longitude: auth.longitude?.toString() || '',
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            });
         }
-    }, [auth?._id, isAuthenticated, authLoading, userProfile, hasRedirected]);
+    }, [auth, isAuthenticated, authLoading, router]);
 
     // Debug: Afficher les valeurs du formulaire quand elles changent
     useEffect(() => {
@@ -77,62 +77,6 @@ export default function EditProfilePage() {
         console.log('  - latitude:', `"${formData.latitude}"`);
         console.log('  - longitude:', `"${formData.longitude}"`);
     }, [formData]);
-
-    const fetchUserProfile = async (userId: string) => {
-        try {
-            setLoading(true);
-            setError(null);
-            console.log('🔄 Récupération du profil utilisateur:', userId);
-            
-            const response = await fetch(`/api/users/${userId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.error || `Erreur ${response.status}: ${response.statusText}`);
-            }
-            
-            const userData = await response.json();
-            console.log('✅ Profil utilisateur récupéré:', userData);
-            
-            setUserProfile(userData);
-            
-            // Pré-remplir le formulaire
-            console.log('📋 Avant setFormData, userData:', userData);
-            const newFormData = {
-                username: userData.username || '',
-                email: userData.email || '',
-                profilePicture: userData.profilePicture || '',
-                bannerPicture: userData.bannerPicture || '',
-                latitude: userData.latitude?.toString() || '',
-                longitude: userData.longitude?.toString() || '',
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-            };
-            
-            console.log('📋 Nouveau formData à définir:', newFormData);
-            setFormData(newFormData);
-
-            console.log('📋 Formulaire pré-rempli:', {
-                username: userData.username,
-                email: userData.email,
-                profilePicture: userData.profilePicture,
-                bannerPicture: userData.bannerPicture,
-                latitude: userData.latitude,
-                longitude: userData.longitude
-            });
-            
-        } catch (err: any) {
-            console.error('❌ Erreur lors de la récupération du profil:', err);
-            setError(err.message || 'Erreur inconnue');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -227,7 +171,7 @@ export default function EditProfilePage() {
                 updateData.password = formData.newPassword;
             }
 
-            const response = await fetch(`/api/users/${userProfile?._id}`, {
+            const response = await fetch(`/api/users/${auth?._id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -251,10 +195,7 @@ export default function EditProfilePage() {
                 confirmPassword: ''
             }));
 
-            // Rafraîchir les données du profil
-            if (userProfile?._id) {
-                fetchUserProfile(userProfile._id);
-            }
+            // Note: En production, il faudrait rafraîchir le contexte auth avec les nouvelles données
 
         } catch (err: any) {
             console.error('❌ Erreur lors de la mise à jour:', err);
@@ -264,7 +205,7 @@ export default function EditProfilePage() {
         }
     };
 
-    if (authLoading || loading) {
+    if (authLoading) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-[#454141] flex items-center justify-center">
                 <div className="text-center">
@@ -275,7 +216,7 @@ export default function EditProfilePage() {
         );
     }
 
-    if (error && !userProfile) {
+    if (error && !auth) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-[#454141] flex items-center justify-center">
                 <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
@@ -299,6 +240,16 @@ export default function EditProfilePage() {
         );
     }
 
+    if (!isAuthenticated || !auth) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-[#454141] flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-gray-600 dark:text-gray-400">Redirection en cours...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#454141] pb-20">
             {/* Bouton GoBack en position fixe */}
@@ -311,7 +262,7 @@ export default function EditProfilePage() {
                 </h1>
 
                 {/* Formulaire */}
-                {userProfile ? (
+                {auth ? (
                     <form onSubmit={handleSubmit} className="space-y-6 w-full">
                         {/* Messages */}
                         {error && (
@@ -325,6 +276,47 @@ export default function EditProfilePage() {
                                 {success}
                             </div>
                         )}
+
+                        {/* Informations de base */}
+                        <div className="p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informations de base</h3>
+                            
+                            <div className="space-y-6">
+                                <div>
+                                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Nom d'utilisateur *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        required
+                                        value={formData.username}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB151] dark:focus:ring-[#3CBDD1]"
+                                        placeholder="Votre nom d'utilisateur"
+                                    />
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Au moins 3 caractères</p>
+                                </div>
+                                
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Adresse email *
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        required
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-[#FFB151] dark:border-[#3CBDD1] text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB151] dark:focus:ring-[#3CBDD1]"
+                                        placeholder="votre@email.com"
+                                    />
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Adresse email valide</p>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Images */}
                         <div className="p-6">
