@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import GoBack from '@/components/GoBack';
-import Carroussel from '@/components/Carroussel';
 
 interface Article {
   _id: string;
@@ -29,6 +28,7 @@ interface Article {
 
 export default function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const [article, setArticle] = useState<Article | null>(null);
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
   const [otherArticles, setOtherArticles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -50,12 +50,13 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
       const response = await fetch('/api/articles');
       if (response.ok) {
         const articles = await response.json();
+        setAllArticles(articles); // Sauvegarder tous les articles
         const foundArticle = articles.find((a: Article) => a.slug === slug);
         if (foundArticle) {
           setArticle(foundArticle);
           const otherArticlesList = articles.filter((a: Article) => a.slug !== slug);
           const otherArticlesIds = otherArticlesList.map((a: Article) => a._id);
-          setOtherArticles(otherArticlesIds.slice(0, 5)); // Limiter à 3 articles
+          setOtherArticles(otherArticlesIds.slice(0, 5)); // Limiter à 5 articles
         } else {
           setError('Article non trouvé');
         }
@@ -77,6 +78,21 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  // Fonction pour convertir les URLs YouTube en URLs d'embed
+  const getYouTubeEmbedUrl = (url: string) => {
+    // Vérifier si c'est une URL YouTube
+    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
+    const match = url.match(youtubeRegex);
+    
+    if (match) {
+      const videoId = match[1];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    // Si ce n'est pas YouTube, retourner l'URL originale
+    return url;
   };
 
   const renderMarkdownContent = (content: string) => {
@@ -220,14 +236,25 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
 
           {/* Video (if available) */}
           {article.videoUrl && (
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-              <video
-                controls
-                className="w-full h-auto rounded-lg"
-                src={article.videoUrl}
-              >
-                Votre navigateur ne supporte pas la vidéo.
-              </video>
+            <div className="p-4 rounded-lg bg-[#FFB151] dark:bg-[#3CBDD1] border-b border-gray-200 dark:border-gray-700">
+              {article.videoUrl.includes('youtube.com') || article.videoUrl.includes('youtu.be') ? (
+                <iframe
+                  className="w-full h-auto aspect-video rounded-lg"
+                  src={getYouTubeEmbedUrl(article.videoUrl)}
+                  title="Vidéo YouTube"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  controls
+                  className="w-full h-auto rounded-lg"
+                  src={article.videoUrl}
+                >
+                  Votre navigateur ne supporte pas la vidéo.
+                </video>
+              )}
             </div>
           )}
 
@@ -243,11 +270,47 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
         {/* Related Articles */}
         {otherArticles.length > 0 && (
           <div className="mt-12">
-            <Carroussel
-              titre='Autres articles'
-              type='Articles'
-              list={otherArticles}
-            />
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 px-4">Autres articles</h2>
+            
+            <div className="overflow-x-auto scrollbar-hide">
+              <div className="flex space-x-4 px-4 pb-2">
+                {otherArticles.slice(0, 5).map((articleId) => {
+                  // Trouver l'article correspondant depuis la liste complète
+                  const relatedArticle = allArticles?.find((a: Article) => a._id === articleId);
+                  
+                  if (!relatedArticle) return null;
+                  
+                  return (
+                    <div key={relatedArticle._id} className="flex-shrink-0">
+                      <Link href={`/article/${relatedArticle.slug}`} className="block">
+                        <div className="w-[217px] h-[121px] bg-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                          {relatedArticle.coverImageUrl ? (
+                            <Image
+                              src={relatedArticle.coverImageUrl}
+                              alt={relatedArticle.title}
+                              width={217}
+                              height={121}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 dark:from-sky-100 to-orange-200 dark:to-sky-200">
+                              <div className="text-center p-3">
+                                <svg className="w-6 h-6 mx-auto mb-1 text-orange-400 dark:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <h3 className="text-xs font-medium text-gray-800 dark:text-gray-200 line-clamp-2">
+                                  {relatedArticle.title}
+                                </h3>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         )}
       </div>

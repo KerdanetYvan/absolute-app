@@ -105,6 +105,7 @@
     --animate-spin: spin 1s linear infinite;
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --blur-sm: 8px;
+    --aspect-video: 16 / 9;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -447,6 +448,9 @@
   }
   .table {
     display: table;
+  }
+  .aspect-video {
+    aspect-ratio: var(--aspect-video);
   }
   .h-2 {
     height: calc(var(--spacing) * 2);
@@ -2075,6 +2079,11 @@
   .dark\:border-sky-500 {
     @media (prefers-color-scheme: dark) {
       border-color: var(--color-sky-500);
+    }
+  }
+  .dark\:bg-\[\#\#3CBDD1\] {
+    @media (prefers-color-scheme: dark) {
+      background-color: ##3CBDD1;
     }
   }
   .dark\:bg-\[\#2e2c2c\] {
