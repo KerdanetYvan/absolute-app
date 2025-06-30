@@ -34,7 +34,7 @@ export async function POST(request) {
         }
 
         // Verify password by comparing with stored hash
-        const isMatch = await bcrypt.compare(body.password, user.password);
+        const isMatch = await bcrypt.compare(body.password, user.passwordHash);
         if (!isMatch) {
             return new Response(JSON.stringify({
                 error: "Invalid password"
@@ -52,7 +52,7 @@ export async function POST(request) {
         });
 
         // Remove password from returned user data
-        const { password, ...other } = user._doc;
+        const { passwordHash, ...other } = user._doc;
 
         // Set httpOnly cookie containing access token
         cookies().set({

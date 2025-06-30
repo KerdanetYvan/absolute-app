@@ -1,40 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { schoolsData } from '@/lib/schools-data';
 
 export async function GET() {
-  const tryPaths = [
-    path.join(process.cwd(), 'data', 'schools.json'),
-    path.join(process.cwd(), 'absolute-app', 'data', 'schools.json')
-  ];
-  let lastError = null;
-  for (const filePath of tryPaths) {
-    try {
-      const data = await fs.readFile(filePath, 'utf-8');
-      const schools = JSON.parse(data);
-      return NextResponse.json(schools);
-    } catch (error) {
-      lastError = error;
-      // Log pour debug
-      console.error('Erreur lors de la lecture de', filePath, error);
-    }
+  try {
+    // Utiliser les données intégrées au lieu de lire un fichier
+    console.log('🏫 Récupération des écoles depuis les données intégrées...');
+    console.log('🏫 Nombre d\'écoles disponibles:', schoolsData.length);
+    
+    return NextResponse.json(schoolsData);
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des écoles:', error);
+    return NextResponse.json({ 
+      error: 'Erreur lors de la récupération des écoles', 
+      details: error instanceof Error ? error.message : 'Erreur inconnue' 
+    }, { status: 500 });
   }
-  return NextResponse.json({ error: 'Erreur lors de la récupération des écoles', details: (lastError as any)?.message }, { status: 500 });
 }
 
-// Méthode POST - ajout d'une nouvelle école dans le fichier schools.json
+// Méthode POST - ajout d'une nouvelle école (DÉSACTIVÉ - données intégrées)
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const filePath = path.join(process.cwd(), 'data', 'schools.json');
-  const data = await fs.readFile(filePath, 'utf-8');
-  const schools = JSON.parse(data);
-
-  const newSchool = {
-    id: (schools.length + 1).toString(),
-    ...body,
-  };
-  schools.push(newSchool);
-
-  await fs.writeFile(filePath, JSON.stringify(schools, null, 2), 'utf-8');
-  return NextResponse.json(newSchool);
+  console.log('⚠️ Tentative d\'ajout d\'école - fonctionnalité désactivée (données intégrées)');
+  
+  return NextResponse.json({ 
+    error: 'L\'ajout d\'écoles est désactivé car les données sont intégrées au code',
+    message: 'Contactez un développeur pour ajouter une nouvelle école'
+  }, { status: 501 });
 }
