@@ -64,13 +64,13 @@ export default function DashboardUsersPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="pl-[220px] flex min-h-screen bg-white dark:bg-[#454141]">
       <NavBarDashboard />
       <main className="flex-1 p-8">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Gestion des utilisateurs</h1>
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 mt-6">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-200">Gestion des utilisateurs</h1>
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-800 mt-6">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase" style={{ backgroundColor: '#FFB151' }}>
+            <thead className="text-xs text-gray-700 uppercase bg-[#FFB151] dark:bg-[#3CBDD1] dark:text-gray-200">
               <tr>
                 <th className="px-6 py-3">Nom d'utilisateur</th>
                 <th className="px-6 py-3">Email</th>
@@ -86,9 +86,9 @@ export default function DashboardUsersPage() {
                 </tr>
               ) : users.length > 0 ? (
                 users.map((user: any) => (
-                  <tr key={user._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    <td className="px-6 py-4 whitespace-nowrap text-gray-800">{user.username}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-gray-800">{user.email}</td>
+                  <tr key={user._id} className="bg-white border-b dark:bg-gray-700/30 dark:border-gray-800 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-800 dark:text-gray-200">{user.username}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-800 dark:text-gray-200">{user.email}</td>
                     <td className="px-6 py-4 text-center">
                       <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${user.isEmailVerified ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                         {user.isEmailVerified ? 'Oui' : 'Non'}
@@ -105,7 +105,7 @@ export default function DashboardUsersPage() {
                           aria-label={user.isAdmin ? 'Retirer le statut administrateur' : 'Donner le statut administrateur'}
                           title={user.isAdmin ? 'Retirer le statut administrateur' : 'Donner le statut administrateur'}
                         />
-                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFB151]/40 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFB151]"></div>
+                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FFB151]/40 dark:peer-focus:ring-[#3CBDD1]/40 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FFB151] dark:peer-checked:bg-[#3CBDD1]"></div>
                       </label>
                     </td>
                     <td className="px-6 py-4 text-center">

@@ -87,7 +87,7 @@ function Toolbar() {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mb-6 p-3 bg-gradient-to-r from-cyan-50/80 to-orange-50/80 dark:from-cyan-900/30 dark:to-orange-900/30 rounded-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md">
+    <div className="flex flex-wrap gap-2 mb-6 p-3 bg-gradient-to-r from-cyan-50/80 to-orange-50/80 dark:from-cyan-900/30 dark:to-cyan-200/30 rounded-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md">
       <button
         type="button"
         onClick={() => formatText('bold')}
@@ -315,16 +315,16 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-[#454141] rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
         {/* Title Input */}
-        <div className="p-6 border-b border-gray-100">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="p-6">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Titre de l'article *
           </label>
           <input
             type="text"
             placeholder="Entrez le titre de votre article..."
-            className="w-full p-4 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+            className="w-full p-4 border border-cyan-200 dark:border-cyan-700 rounded-lg bg-white/90 dark:bg-gray-700/90 text-gray-900 placeholder-gray-400 transition-all duration-200 shadow-sm focus:shadow-md"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -332,52 +332,52 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
         </div>
 
         {/* Metadata Section */}
-        <div className="p-6 border-b border-gray-100 bg-orange-50/40">
+        <div className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Catégorie
               </label>
               <input
                 type="text"
                 placeholder="ex: Technologie, Sport..."
-                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+                className="w-full p-4 border border-cyan-200 dark:border-cyan-700 rounded-lg bg-white/90 dark:bg-gray-700/90 text-gray-900 placeholder-gray-400 transition-all duration-200 shadow-sm focus:shadow-md"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Tags (séparés par des virgules)
               </label>
               <input
                 type="text"
                 placeholder="ex: javascript, react, web"
-                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+                className="w-full p-4 border border-cyan-200 dark:border-cyan-700 rounded-lg bg-white/90 dark:bg-gray-700/90 text-gray-900 placeholder-gray-400 transition-all duration-200 shadow-sm focus:shadow-md"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Lien de l'image de couverture (optionnel)
               </label>
               <input
                 type="url"
                 placeholder="https://.../image.jpg"
-                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md mb-4"
+                className="w-full p-4 border border-cyan-200 dark:border-cyan-700 rounded-lg bg-white/90 dark:bg-gray-700/90 text-gray-900 placeholder-gray-400 transition-all duration-200 shadow-sm focus:shadow-md"
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Lien de la vidéo (optionnel)
               </label>
               <input
                 type="url"
                 placeholder="https://www.youtube.com/watch?v=..."
-                className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB151] focus:border-[#FFB151] transition-all duration-200 shadow-sm focus:shadow-md"
+                className="w-full p-4 border border-cyan-200 dark:border-cyan-700 rounded-lg bg-white/90 dark:bg-gray-700/90 text-gray-900 placeholder-gray-400 transition-all duration-200 shadow-sm focus:shadow-md"
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
               />
@@ -387,7 +387,7 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
 
         {/* Editor Section */}
         <div className="p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Contenu de l'article *
           </label>
           
@@ -412,7 +412,7 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
         </div>
 
         {/* Action Buttons */}
-        <div className="p-6 bg-orange-50/60 border-t border-gray-100 flex justify-between items-center">
+        <div className="p-6 flex justify-between items-center">
           <div className="text-sm text-gray-500 mx-8 px-8">
             {title.length > 0 && `Titre: ${title.length} caractères`}
             {content.length > 0 && (
@@ -426,14 +426,14 @@ const NewArticle = ({ onSuccess, onError, showPreview = true, className = "" }) 
               type="button"
               onClick={resetForm}
               disabled={isSubmitting}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md focus:ring-2 focus:ring-[#FFB151] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 dark:text-gray-50 dark:hover:text-black border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Réinitialiser
             </button>
             <button
               type="submit"
               disabled={!title.trim() || !content.trim() || isSubmitting}
-              className="px-8 py-3 bg-[#FFB151] hover:bg-orange-400 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              className="px-8 py-3 bg-[#FFB151] dark:bg-[#3CBDD1] hover:bg-orange-400 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus:ring-2 focus:ring-orange-400 focus:outline-none"
             >
               {isSubmitting ? (
                 <div className="flex items-center">

@@ -4,6 +4,9 @@ import Image from 'next/image';
 export const NavBarDashboard = () => {
   return (
     <nav style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
       display: 'flex',
       flexDirection: 'column',
       width: '220px',
