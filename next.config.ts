@@ -1,6 +1,4 @@
-const withPWA = require('@ducanh2912/next-pwa').default;
-const runtimeCaching = require('./runtime-caching');
-
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     domains: [
@@ -22,21 +20,7 @@ const nextConfig = {
       }
     ],
     unoptimized: true // Pour les images locales
-  },
-  pwa: {
-    dest: 'public',
-    register: true,
-    skipWaiting: true,
-    disable: process.env.NODE_ENV === 'development',
-    runtimeCaching,
-    buildExcludes: [/middleware-manifest\.json$/],
-    fallbacks: {
-      // If a page or route is not available offline, fallback to this page
-      // This must match the path of your offline page
-      document: '/offline',
-      // Optionally, you can add image or font fallbacks here
-    },
   }
 };
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig;
