@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
+const withPWA = require('@ducanh2912/next-pwa').default;
+const runtimeCaching = require('./runtime-caching');
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     domains: [
       'images.unsplash.com',
@@ -11,16 +12,31 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
         port: '',
-        pathname: '/**',
+        pathname: '/',
       },
       {
         protocol: 'https',
         hostname: 'plus.unsplash.com',
         port: '',
-        pathname: '/**',
+        pathname: '/',
       }
-    ]
+    ],
+    unoptimized: true // Pour les images locales
+  },
+  pwa: {
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development',
+    runtimeCaching,
+    buildExcludes: [/middleware-manifest\.json$/],
+    fallbacks: {
+      // If a page or route is not available offline, fallback to this page
+      // This must match the path of your offline page
+      document: '/offline',
+      // Optionally, you can add image or font fallbacks here
+    },
   }
 };
 
-export default nextConfig;
+module.exports = withPWA(nextConfig);
